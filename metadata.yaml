@@ -1,0 +1,5 @@
+homepage: "https://oursprivacy.com/"
+documentation: "https://docs.oursprivacy.com/docs/overview"
+versions:
+  - sha: caf2f3ac0131832662755d9d70a38e4210d7a8b0
+    changeNotes: Initial release.
