@@ -1,6 +1,8 @@
 homepage: "https://oursprivacy.com/"
 documentation: "https://docs.oursprivacy.com/docs/overview"
 versions:
+  - sha: 26a97b36a150fabc99861d532b9e02ed29c075ef
+    changeNote: Dropdown options for user properties & install mode
   - sha: 1bc3601104bca697113285bdce6446b33398699f
     changeNotes: Added template categories
   - sha: caf2f3ac0131832662755d9d70a38e4210d7a8b0
