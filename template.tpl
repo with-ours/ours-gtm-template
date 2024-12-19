@@ -179,6 +179,241 @@ ___TEMPLATE_PARAMETERS___
             "type": "TEXT"
           }
         ]
+      },
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "track_defaultProperties",
+        "displayName": "Default Properties (optional)",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "Property",
+            "name": "property",
+            "type": "SELECT",
+            "isUnique": true,
+            "selectItems": [
+              {
+                "displayValue": "Page Title",
+                "value": "title"
+              },
+              {
+                "displayValue": "Ad ID",
+                "value": "ad_id"
+              },
+              {
+                "displayValue": "Facebook Click ID (fbc)",
+                "value": "fbc"
+              },
+              {
+                "displayValue": "Facebook Pixel ID (fbp)",
+                "value": "fbp"
+              },
+              {
+                "displayValue": "Facebook Click Identifier (fbclid)",
+                "value": "fbclid"
+              },
+              {
+                "displayValue": "FBCLID Creation Time",
+                "value": "fbclid_creation_time"
+              },
+              {
+                "displayValue": "Google Ads Source",
+                "value": "gad_source"
+              },
+              {
+                "displayValue": "Google Ads GBRAID",
+                "value": "gbraid"
+              },
+              {
+                "displayValue": "Google Click ID (GCLID)",
+                "value": "gc_id"
+              },
+              {
+                "displayValue": "Google Ads GCLID",
+                "value": "gclid"
+              },
+              {
+                "displayValue": "IP Address",
+                "value": "ip"
+              },
+              {
+                "displayValue": "Microsoft Click ID (msclkid)",
+                "value": "msclkid"
+              },
+              {
+                "displayValue": "TikTok Click ID (ttclid)",
+                "value": "ttclid"
+              },
+              {
+                "displayValue": "LinkedIn FAT ID",
+                "value": "li_fat_id"
+              },
+              {
+                "displayValue": "Referrer URL",
+                "value": "referrer"
+              },
+              {
+                "displayValue": "User Agent",
+                "value": "user_agent"
+              },
+              {
+                "displayValue": "UTM Campaign",
+                "value": "utm_campaign"
+              },
+              {
+                "displayValue": "UTM Content",
+                "value": "utm_content"
+              },
+              {
+                "displayValue": "UTM Medium",
+                "value": "utm_medium"
+              },
+              {
+                "displayValue": "UTM Name",
+                "value": "utm_name"
+              },
+              {
+                "displayValue": "UTM Source",
+                "value": "utm_source"
+              },
+              {
+                "displayValue": "UTM Term",
+                "value": "utm_term"
+              },
+              {
+                "displayValue": "WBRAID Identifier",
+                "value": "wbraid"
+              },
+              {
+                "displayValue": "Reddit Click ID",
+                "value": "rdt_cid"
+              },
+              {
+                "displayValue": "Epik Tracking ID",
+                "value": "epik"
+              },
+              {
+                "displayValue": "StackAdapt Tracking ID",
+                "value": "sacid"
+              },
+              {
+                "displayValue": "Encoding",
+                "value": "encoding"
+              },
+              {
+                "displayValue": "Browser Name",
+                "value": "browser_name"
+              },
+              {
+                "displayValue": "Browser Version",
+                "value": "browser_version"
+              },
+              {
+                "displayValue": "CPU Architecture",
+                "value": "cpu_architecture"
+              },
+              {
+                "displayValue": "Device Type",
+                "value": "device_type"
+              },
+              {
+                "displayValue": "Device Model",
+                "value": "device_model"
+              },
+              {
+                "displayValue": "Device Vendor",
+                "value": "device_vendor"
+              },
+              {
+                "displayValue": "Browser Engine Name",
+                "value": "engine_name"
+              },
+              {
+                "displayValue": "Browser Engine Version",
+                "value": "engine_version"
+              },
+              {
+                "displayValue": "Operating System Name",
+                "value": "os_name"
+              },
+              {
+                "displayValue": "Operating System Version",
+                "value": "os_version"
+              },
+              {
+                "displayValue": "Browser Language",
+                "value": "browser_language"
+              },
+              {
+                "displayValue": "Current URL",
+                "value": "current_url"
+              },
+              {
+                "displayValue": "WebView Mode",
+                "value": "webview"
+              },
+              {
+                "displayValue": "Loaded in Iframe",
+                "value": "iframe"
+              },
+              {
+                "displayValue": "Session Count",
+                "value": "sessionCount"
+              },
+              {
+                "displayValue": "Active Duration (seconds)",
+                "value": "activeDuration"
+              },
+              {
+                "displayValue": "Total Duration (seconds)",
+                "value": "duration"
+              },
+              {
+                "displayValue": "Host",
+                "value": "host"
+              },
+              {
+                "displayValue": "Pathname",
+                "value": "pathname"
+              },
+              {
+                "displayValue": "Screen Height (px)",
+                "value": "screen_height"
+              },
+              {
+                "displayValue": "Screen Width (px)",
+                "value": "screen_width"
+              },
+              {
+                "displayValue": "App Version",
+                "value": "version"
+              }
+            ]
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Value",
+            "name": "value",
+            "type": "TEXT"
+          },
+          {
+            "defaultValue": "fallback",
+            "displayName": "Behavior",
+            "name": "behavior",
+            "type": "SELECT",
+            "selectItems": [
+              {
+                "value": "override",
+                "displayValue": "Override"
+              },
+              {
+                "value": "fallback",
+                "displayValue": "Fallback"
+              }
+            ]
+          }
+        ],
+        "help": "Ours collects all of these properties by default. You can either specify a fallback here for when Ours is missing a certain value. Or, you can set a value for a property as an override."
       }
     ],
     "enablingConditions": [
@@ -316,79 +551,91 @@ const LOG_PREFIX = "[Ours / GTM] ";
 const WRAPPER_NAMESPACE = "ours";
 const CDN_URL = "https://cdn.oursprivacy.com/main.js";
 
-// Helpers
-
 // Print a log message and set the tag to failed state
 const fail = (msg) => {
-  log(LOG_PREFIX + "Error: " + msg);
-  return data.gtmOnFailure();
+    log(LOG_PREFIX + "Error: " + msg);
+    return data.gtmOnFailure();
 };
 
 // Normalize the input and return it
 const normalize = (val) => {
-  if (val === "null") return null;
-  if (val === "true" || val === true) return true;
-  if (val === "false" || val === false) return false;
-  return makeNumber(val) || val;
+    if (val === "null") return null;
+    if (val === "true" || val === true) return true;
+    if (val === "false" || val === false) return false;
+    return makeNumber(val) || val;
 };
 
 // Normalize the template table
 const normalizeTable = (table, prop, val) => {
-  if (table && table.length) {
-    table = table.map((row) => {
-      const obj = {};
-      obj[prop] = row[prop];
-      obj[val] = normalize(row[val]);
-      return obj;
-    });
-    return makeTableMap(table, prop, val);
-  }
-  return false;
+    if (table && table.length) {
+        table = table.map((row) => {
+            const obj = {};
+            obj[prop] = row[prop];
+            obj[val] = normalize(row[val]);
+            return obj;
+        });
+        return makeTableMap(table, prop, val);
+    }
+    return false;
+};
+
+const normalizeThreeColumnTable = (table, prop, val, behavior) => {
+    if (table && table.length) {
+        return table.reduce((acc, row) => {
+            acc[row[prop]] = {};
+            acc[row[prop]][val] = row[val];
+            acc[row[prop]][behavior] = row[behavior];
+            return acc;
+        }, {});
+    }
+    return false;
 };
 
 const onfailure = () => {
-  return fail("Failed to load the Ours JavaScript library");
+    return fail("Failed to load the Ours JavaScript library");
 };
 
 const onsuccess = () => {
-  callInWindow("ours", "init", data.token);
+    callInWindow("ours", "init", data.token);
 
-  switch (data.type) {
-    case "install":
-      log('installed');
-      // does nothing else - ensures the injectScript is called below.
-      break;
-    case "track":
-      const trackEventProperties =
-        normalizeTable(data.track_eventProperties, "property", "value") || {};
-      const trackUserProperties =
-        normalizeTable(data.track_userProperties, "property", "value") || {};
+    switch (data.type) {
+        case "install":
+            log('installed');
+            // does nothing else - ensures the injectScript is called below.
+            break;
+        case "track":
+            const trackEventProperties =
+                normalizeTable(data.track_eventProperties, "property", "value") || {};
+            const trackUserProperties =
+                normalizeTable(data.track_userProperties, "property", "value") || {};
+            const trackDefaultProperties =  
+                normalizeThreeColumnTable(data.track_defaultProperties, "property", "value", "behavior") || {};
+            callInWindow(
+                "ours",
+                "track",
+                data.track_eventName,
+                trackEventProperties,
+                trackUserProperties,
+                trackDefaultProperties
+            );
+            break;
 
-      callInWindow(
-        "ours",
-        "track",
-        data.track_eventName,
-        trackEventProperties,
-        trackUserProperties
-      );
-      break;
+        case "identify":
+            const userProperties =
+                normalizeTable(data.identify_userProperties, "property", "value") || {};
+            callInWindow("ours", "identify", userProperties);
+            break;
+    }
 
-    case "identify":
-      const userProperties =
-        normalizeTable(data.identify_userProperties, "property", "value") || {};
-      callInWindow("ours", "identify", userProperties);
-      break;
-  }
-
-  data.gtmOnSuccess();
+    data.gtmOnSuccess();
 };
 
 // Check if namespace already exists
 const _ours = copyFromWindow(WRAPPER_NAMESPACE);
 if (!_ours) {
-  injectScript(CDN_URL, onsuccess, onfailure, "ours");
+    injectScript(CDN_URL, onsuccess, onfailure, "ours");
 } else {
-  onsuccess();
+    onsuccess();
 }
 
 
