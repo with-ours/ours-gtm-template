@@ -131,6 +131,10 @@ ___TEMPLATE_PARAMETERS___
                 "displayValue": "Last Name"
               },
               {
+                "value": "gender",
+                "displayValue": "Gender"
+              },
+              {
                 "value": "city",
                 "displayValue": "City"
               },
@@ -453,6 +457,10 @@ ___TEMPLATE_PARAMETERS___
               {
                 "value": "last_name",
                 "displayValue": "Last Name"
+              },
+              {
+                "value": "gender",
+                "displayValue": "Gender"
               },
               {
                 "value": "city",
