@@ -418,6 +418,13 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "help": "Ours collects all of these properties by default. You can either specify a fallback here for when Ours is missing a certain value. Or, you can set a value for a property as an override."
+      },
+      {
+        "type": "TEXT",
+        "name": "track_distinctId",
+        "displayName": "Distinct ID (optional)",
+        "simpleValueType": true,
+        "help": "Optional. This is passed onto destinations for de-duplication. And is usually defaulted to a unique uuid. If you wish to override the unique uuid, pass a random value here."
       }
     ],
     "enablingConditions": [
@@ -618,6 +625,9 @@ const onsuccess = () => {
                 normalizeTable(data.track_userProperties, "property", "value") || {};
             const trackDefaultProperties =  
                 normalizeThreeColumnTable(data.track_defaultProperties, "property", "value", "behavior") || {};
+            if (data.track_distinctId) {
+                trackEventProperties['distinct_id'] = data.track_distinctId;
+            }
             callInWindow(
                 "ours",
                 "track",
@@ -665,6 +675,9 @@ ___WEB_PERMISSIONS___
           }
         }
       ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
     },
     "isRequired": true
   },
