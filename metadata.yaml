@@ -1,6 +1,8 @@
 homepage: "https://oursprivacy.com/"
 documentation: "https://docs.oursprivacy.com/docs/overview"
 versions:
+  - sha: cf4460b768b2c6d72c65a82c884f45e901d2b588
+    changeNotes: Allow users to specify a specific distinct id for the event for duplication purposes
   - sha: 705eb6eebd7b2c0b5855aa327e6149eea1c931bf
     changeNotes: Allow users to override or specify fallbacks for default values
   - sha: 26a97b36a150fabc99861d532b9e02ed29c075ef
