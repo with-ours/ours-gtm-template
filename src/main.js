@@ -71,7 +71,7 @@ const onsuccess = () => {
             const trackDefaultProperties =  
                 normalizeThreeColumnTable(data.track_defaultProperties, "property", "value", "behavior") || {};
             if (data.track_distinctId) {
-                trackEventProperties['$distinctId'] = data.track_distinctId;
+                trackEventProperties['$distinct_id'] = data.track_distinctId;
             }
             callInWindow(
                 "ours",
