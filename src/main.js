@@ -53,11 +53,11 @@ const normalizeThreeColumnTable = (table, prop, val, behavior) => {
 const handleInit = () => {
     const user_id = data.advanced_user_id_override;
     if (user_id) {
-        callInWindow("ours", "init", data.token, { user_id });
+        callInWindow("ours", "init", data.token, { user_id: user_id });
     } else {
         callInWindow("ours", "init", data.token);
     }
-}
+};
 
 // Handle the failure of the tag
 const onFailure = () => {
@@ -109,4 +109,4 @@ if (!_ours) {
     injectScript(CDN_URL, onSuccess, onFailure, "ours");
 } else {
     onSuccess();
-}
+};
