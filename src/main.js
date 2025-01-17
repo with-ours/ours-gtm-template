@@ -1,4 +1,3 @@
-// APIs
 const callInWindow = require("callInWindow");
 const copyFromWindow = require("copyFromWindow");
 const injectScript = require("injectScript");
@@ -6,7 +5,6 @@ const log = require("logToConsole");
 const makeNumber = require("makeNumber");
 const makeTableMap = require("makeTableMap");
 
-// Constants
 const LOG_PREFIX = "[Ours / GTM] ";
 const WRAPPER_NAMESPACE = "ours";
 const CDN_URL = "https://cdn.oursprivacy.com/main.js";
@@ -51,12 +49,24 @@ const normalizeThreeColumnTable = (table, prop, val, behavior) => {
     return false;
 };
 
-const onfailure = () => {
+// Handle the initializing of the Ours library
+const handleInit = () => {
+    const user_id = data.advanced_user_id_override;
+    if (user_id) {
+        callInWindow("ours", "init", data.token, { user_id: user_id });
+    } else {
+        callInWindow("ours", "init", data.token);
+    }
+};
+
+// Handle the failure of the tag
+const onFailure = () => {
     return fail("Failed to load the Ours JavaScript library");
 };
 
-const onsuccess = () => {
-    callInWindow("ours", "init", data.token);
+// Handle the success of the tag
+const onSuccess = () => {
+    handleInit();
 
     switch (data.type) {
         case "install":
@@ -68,7 +78,7 @@ const onsuccess = () => {
                 normalizeTable(data.track_eventProperties, "property", "value") || {};
             const trackUserProperties =
                 normalizeTable(data.track_userProperties, "property", "value") || {};
-            const trackDefaultProperties =  
+            const trackDefaultProperties =
                 normalizeThreeColumnTable(data.track_defaultProperties, "property", "value", "behavior") || {};
             if (data.track_distinctId) {
                 trackEventProperties['$distinct_id'] = data.track_distinctId;
@@ -96,7 +106,7 @@ const onsuccess = () => {
 // Check if namespace already exists
 const _ours = copyFromWindow(WRAPPER_NAMESPACE);
 if (!_ours) {
-    injectScript(CDN_URL, onsuccess, onfailure, "ours");
+    injectScript(CDN_URL, onSuccess, onFailure, "ours");
 } else {
-    onsuccess();
-}
+    onSuccess();
+};

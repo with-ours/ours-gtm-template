@@ -537,7 +537,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "LABEL",
         "name": "installOptions_label",
-        "displayName": "This will ensure that the Ours script is installed and ready to go. To ensure the Ours script is installed, you either need to have a \"track\" tag that\u0027s triggered on PageLoad. Or, if you don\u0027t want to track a PageView, you can trigger this install command on PageLoad"
+        "displayName": "In order for Ours to function as expected, please be sure that you trigger an \"Install\" Tag on every page."
       }
     ],
     "enablingConditions": [
@@ -547,13 +547,27 @@ ___TEMPLATE_PARAMETERS___
         "type": "EQUALS"
       }
     ]
+  },
+  {
+    "type": "GROUP",
+    "name": "advanced",
+    "displayName": "Advanced",
+    "groupStyle": "ZIPPY_CLOSED",
+    "subParams": [
+      {
+        "type": "TEXT",
+        "name": "advanced_user_id_override",
+        "displayName": "Ours User ID Override",
+        "simpleValueType": true,
+        "help": "This will be used as the ID for the user in Ours. Usually, we recommend setting the externalId of the user instead of configuring passing your own User ID here. If you set this value, ensure that it is sufficiently random enough so that users do not share an ID."
+      }
+    ]
   }
 ]
 
 
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
-// APIs
 const callInWindow = require("callInWindow");
 const copyFromWindow = require("copyFromWindow");
 const injectScript = require("injectScript");
@@ -561,7 +575,6 @@ const log = require("logToConsole");
 const makeNumber = require("makeNumber");
 const makeTableMap = require("makeTableMap");
 
-// Constants
 const LOG_PREFIX = "[Ours / GTM] ";
 const WRAPPER_NAMESPACE = "ours";
 const CDN_URL = "https://cdn.oursprivacy.com/main.js";
@@ -606,12 +619,24 @@ const normalizeThreeColumnTable = (table, prop, val, behavior) => {
     return false;
 };
 
-const onfailure = () => {
+// Handle the initializing of the Ours library
+const handleInit = () => {
+    const user_id = data.advanced_user_id_override;
+    if (user_id) {
+        callInWindow("ours", "init", data.token, { user_id: user_id });
+    } else {
+        callInWindow("ours", "init", data.token);
+    }
+};
+
+// Handle the failure of the tag
+const onFailure = () => {
     return fail("Failed to load the Ours JavaScript library");
 };
 
-const onsuccess = () => {
-    callInWindow("ours", "init", data.token);
+// Handle the success of the tag
+const onSuccess = () => {
+    handleInit();
 
     switch (data.type) {
         case "install":
@@ -623,7 +648,7 @@ const onsuccess = () => {
                 normalizeTable(data.track_eventProperties, "property", "value") || {};
             const trackUserProperties =
                 normalizeTable(data.track_userProperties, "property", "value") || {};
-            const trackDefaultProperties =  
+            const trackDefaultProperties =
                 normalizeThreeColumnTable(data.track_defaultProperties, "property", "value", "behavior") || {};
             if (data.track_distinctId) {
                 trackEventProperties['$distinct_id'] = data.track_distinctId;
@@ -651,10 +676,10 @@ const onsuccess = () => {
 // Check if namespace already exists
 const _ours = copyFromWindow(WRAPPER_NAMESPACE);
 if (!_ours) {
-    injectScript(CDN_URL, onsuccess, onfailure, "ours");
+    injectScript(CDN_URL, onSuccess, onFailure, "ours");
 } else {
-    onsuccess();
-}
+    onSuccess();
+};
 
 
 ___WEB_PERMISSIONS___
