@@ -1,0 +1,20 @@
+name: Notify Slack on New Issue
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  notify-slack:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data "{
+            \"text\": \"New GTM template issue opened: *${ISSUE_TITLE}* \\n<${ISSUE_URL}|View Issue>\"
+          }" $SLACK_WEBHOOK_URL
