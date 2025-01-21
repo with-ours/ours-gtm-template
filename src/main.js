@@ -107,7 +107,7 @@ const onTrack = () => {
   if (isOursDefined()) {
     callInWindow('ours', 'track', data.track_eventName, ep, up, dp);
   } else {
-    storeInTemplateStorage([data.track_eventName, ep, up, dp]);
+    storeInTemplateStorage(['track', data.track_eventName, ep, up, dp]);
   }
   data.gtmOnSuccess();
 };
