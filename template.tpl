@@ -35,6 +35,48 @@ ___TEMPLATE_PARAMETERS___
 
 [
   {
+    "type": "SELECT",
+    "name": "type",
+    "displayName": "Action",
+    "selectItems": [
+      {
+        "value": "track",
+        "displayValue": "Track"
+      },
+      {
+        "value": "install",
+        "displayValue": "Install"
+      },
+      {
+        "value": "identify",
+        "displayValue": "Identify"
+      }
+    ],
+    "simpleValueType": true,
+    "defaultValue": "track",
+    "alwaysInSummary": true
+  },
+  {
+    "type": "GROUP",
+    "name": "installOptions",
+    "displayName": "Install Options",
+    "groupStyle": "NO_ZIPPY",
+    "subParams": [
+      {
+        "type": "LABEL",
+        "name": "installOptions_label",
+        "displayName": "Please be sure to trigger an \"Install\" tag on with the \"Initialization\" trigger on every page. \u003ca href\u003d\"https://docs.oursprivacy.com/docs/gtm-install\"\u003eRead more\u003c/a\u003e"
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "type",
+        "paramValue": "install",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
     "type": "TEXT",
     "name": "token",
     "displayName": "Project Token",
@@ -45,29 +87,52 @@ ___TEMPLATE_PARAMETERS___
       }
     ],
     "help": "You can get the Project Token from \u003ca href\u003d\"https://app.oursprivacy.com/install\" target\u003d\"_blank\"\u003eproject settings\u003c/a\u003e.",
-    "alwaysInSummary": true
+    "alwaysInSummary": true,
+    "enablingConditions": [
+      {
+        "paramName": "type",
+        "paramValue": "install",
+        "type": "EQUALS"
+      }
+    ]
   },
   {
-    "type": "SELECT",
-    "name": "type",
-    "displayName": "Action",
-    "selectItems": [
+    "type": "GROUP",
+    "name": "advanced",
+    "displayName": "Advanced",
+    "groupStyle": "ZIPPY_CLOSED",
+    "subParams": [
       {
-        "value": "track",
-        "displayValue": "Track"
+        "type": "TEXT",
+        "name": "advanced_user_id_override",
+        "displayName": "Ours User ID Override",
+        "simpleValueType": true,
+        "help": "This will be used as the ID for the user in Ours. Usually, we recommend setting the externalId of the user instead of configuring passing your own User ID here. If you set this value, ensure that it is sufficiently random enough so that users do not share an ID."
       },
       {
-        "value": "identify",
-        "displayValue": "Identity"
-      },
-      {
-        "value": "install",
-        "displayValue": "Install"
+        "type": "TEXT",
+        "name": "advanced_custom_domain",
+        "displayName": "Custom Domain",
+        "simpleValueType": true,
+        "help": "After you have configured a custom domain in your Ours Privacy account, enter it here. The value needs to start with \"https://\" and not have a trailing path and/or slash. \n Example: https://metrics.oursprivacy.com \u003ca href\u003d\"https://docs.oursprivacy.com/docs/custom-domains\"\u003eRead more\u003c/a\u003e",
+        "valueValidators": [
+          {
+            "type": "REGEX",
+            "args": [
+              "^https:\\/\\/[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+            ]
+          }
+        ],
+        "valueHint": "https://metrics.oursprivacy.com"
       }
     ],
-    "simpleValueType": true,
-    "defaultValue": "track",
-    "alwaysInSummary": true
+    "enablingConditions": [
+      {
+        "paramName": "type",
+        "paramValue": "install",
+        "type": "EQUALS"
+      }
+    ]
   },
   {
     "type": "GROUP",
@@ -422,7 +487,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "TEXT",
         "name": "track_distinctId",
-        "displayName": "Distinct ID (optional)",
+        "displayName": "Distinct Event ID (optional)",
         "simpleValueType": true,
         "help": "Optional. This is passed onto destinations for de-duplication. And is usually defaulted to a unique uuid. If you wish to override the unique uuid, pass a random value here."
       }
@@ -525,41 +590,6 @@ ___TEMPLATE_PARAMETERS___
         "paramName": "type",
         "paramValue": "identify",
         "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "GROUP",
-    "name": "installOptions",
-    "displayName": "Install Options",
-    "groupStyle": "NO_ZIPPY",
-    "subParams": [
-      {
-        "type": "LABEL",
-        "name": "installOptions_label",
-        "displayName": "In order for Ours to function as expected, please be sure that you trigger an \"Install\" Tag on every page."
-      }
-    ],
-    "enablingConditions": [
-      {
-        "paramName": "type",
-        "paramValue": "install",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "GROUP",
-    "name": "advanced",
-    "displayName": "Advanced",
-    "groupStyle": "ZIPPY_CLOSED",
-    "subParams": [
-      {
-        "type": "TEXT",
-        "name": "advanced_user_id_override",
-        "displayName": "Ours User ID Override",
-        "simpleValueType": true,
-        "help": "This will be used as the ID for the user in Ours. Usually, we recommend setting the externalId of the user instead of configuring passing your own User ID here. If you set this value, ensure that it is sufficiently random enough so that users do not share an ID."
       }
     ]
   }
