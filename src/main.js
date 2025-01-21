@@ -1,112 +1,121 @@
-const callInWindow = require("callInWindow");
-const copyFromWindow = require("copyFromWindow");
-const injectScript = require("injectScript");
-const log = require("logToConsole");
-const makeNumber = require("makeNumber");
-const makeTableMap = require("makeTableMap");
+const callInWindow = require('callInWindow');
+const copyFromWindow = require('copyFromWindow');
+const injectScript = require('injectScript');
+const log = require('logToConsole');
+const makeNumber = require('makeNumber');
+const makeTableMap = require('makeTableMap');
 
-const LOG_PREFIX = "[Ours / GTM] ";
-const WRAPPER_NAMESPACE = "ours";
-const CDN_URL = "https://cdn.oursprivacy.com/main.js";
-
-// Print a log message and set the tag to failed state
-const fail = (msg) => {
-    log(LOG_PREFIX + "Error: " + msg);
-    return data.gtmOnFailure();
-};
+const CDN_URL = 'https://cdn.oursprivacy.com';
+const MAIN_JS_PATH = 'main.js';
 
 // Normalize the input and return it
 const normalize = (val) => {
-    if (val === "null") return null;
-    if (val === "true" || val === true) return true;
-    if (val === "false" || val === false) return false;
-    return makeNumber(val) || val;
+  if (val === 'null') return null;
+  if (val === 'true' || val === true) return true;
+  if (val === 'false' || val === false) return false;
+  return makeNumber(val) || val;
 };
 
 // Normalize the template table
 const normalizeTable = (table, prop, val) => {
-    if (table && table.length) {
-        table = table.map((row) => {
-            const obj = {};
-            obj[prop] = row[prop];
-            obj[val] = normalize(row[val]);
-            return obj;
-        });
-        return makeTableMap(table, prop, val);
-    }
-    return false;
+  if (table && table.length) {
+    table = table.map((row) => {
+      const obj = {};
+      obj[prop] = row[prop];
+      obj[val] = normalize(row[val]);
+      return obj;
+    });
+    return makeTableMap(table, prop, val);
+  }
+  return false;
 };
 
+// Normalize the three column table
 const normalizeThreeColumnTable = (table, prop, val, behavior) => {
-    if (table && table.length) {
-        return table.reduce((acc, row) => {
-            acc[row[prop]] = {};
-            acc[row[prop]][val] = row[val];
-            acc[row[prop]][behavior] = row[behavior];
-            return acc;
-        }, {});
-    }
-    return false;
+  if (table && table.length) {
+    return table.reduce((acc, row) => {
+      acc[row[prop]] = {};
+      acc[row[prop]][val] = row[val];
+      acc[row[prop]][behavior] = row[behavior];
+      return acc;
+    }, {});
+  }
+  return false;
 };
 
-// Handle the initializing of the Ours library
-const handleInit = () => {
-    const user_id = data.advanced_user_id_override;
-    if (user_id) {
-        callInWindow("ours", "init", data.token, { user_id: user_id });
-    } else {
-        callInWindow("ours", "init", data.token);
-    }
+// Handle install failure
+const onInstallFailure = () => {
+  log('Error: Failed to load the Ours JavaScript library');
+  return data.gtmOnFailure();
 };
 
-// Handle the failure of the tag
-const onFailure = () => {
-    return fail("Failed to load the Ours JavaScript library");
+// Handle install success and calls gtmOnSuccess
+const onInstallSuccess = () => {
+  const user_id = data.advanced_user_id_override;
+  const custom_domain = data.advanced_custom_domain;
+  let options = {};
+  if (user_id) {
+    options.user_id = user_id;
+  }
+  if (custom_domain) {
+    options.custom_domain = custom_domain;
+  }
+
+  callInWindow('ours', 'init', data.token, options);
+  data.gtmOnSuccess();
 };
 
-// Handle the success of the tag
-const onSuccess = () => {
-    handleInit();
-
-    switch (data.type) {
-        case "install":
-            log('installed');
-            // does nothing else - ensures the injectScript is called below.
-            break;
-        case "track":
-            const trackEventProperties =
-                normalizeTable(data.track_eventProperties, "property", "value") || {};
-            const trackUserProperties =
-                normalizeTable(data.track_userProperties, "property", "value") || {};
-            const trackDefaultProperties =
-                normalizeThreeColumnTable(data.track_defaultProperties, "property", "value", "behavior") || {};
-            if (data.track_distinctId) {
-                trackEventProperties['$distinct_id'] = data.track_distinctId;
-            }
-            callInWindow(
-                "ours",
-                "track",
-                data.track_eventName,
-                trackEventProperties,
-                trackUserProperties,
-                trackDefaultProperties
-            );
-            break;
-
-        case "identify":
-            const userProperties =
-                normalizeTable(data.identify_userProperties, "property", "value") || {};
-            callInWindow("ours", "identify", userProperties);
-            break;
-    }
-
-    data.gtmOnSuccess();
+const onInstall = () => {
+  const oursIsDefined = copyFromWindow('ours');
+  if (!oursIsDefined) {
+    const domain = data.advanced_custom_domain || CDN_URL;
+    const script = domain + '/' + MAIN_JS_PATH;
+    const cacheToken = 'ours-cache-token';
+    injectScript(script, onInstallSuccess, onInstallFailure, cacheToken);
+  } else {
+    onInstallSuccess();
+  }
 };
 
-// Check if namespace already exists
-const _ours = copyFromWindow(WRAPPER_NAMESPACE);
-if (!_ours) {
-    injectScript(CDN_URL, onSuccess, onFailure, "ours");
-} else {
-    onSuccess();
+// Handle track
+const onTrack = () => {
+  const ep = normalizeTable(data.track_eventProperties, 'property', 'value') || {};
+  const up = normalizeTable(data.track_userProperties, 'property', 'value') || {};
+  const dp = normalizeThreeColumnTable(data.track_defaultProperties, 'property', 'value', 'behavior') || {};
+  if (data.track_distinctId) {
+    ep['$distinct_id'] = data.track_distinctId;
+  }
+
+  callInWindow('ours', 'track', data.track_eventName, ep, up, dp);
+  data.gtmOnSuccess();
 };
+
+// Handle identify
+const onIdentify = () => {
+  const userProperties = normalizeTable(data.identify_userProperties, 'property', 'value');
+  callInWindow('ours', 'identify', userProperties || {});
+  data.gtmOnSuccess();
+};
+
+// main entry point
+const run = () => {
+  switch (data.type) {
+    case 'install':
+      onInstall();
+      break;
+
+    case 'track':
+      onTrack();
+      break;
+
+    case 'identify':
+      onIdentify();
+      break;
+
+    default:
+      log('Invalid tag type ', data.type);
+      break;
+  }
+};
+
+run();
