@@ -4,6 +4,7 @@ const injectScript = require('injectScript');
 const log = require('logToConsole');
 const makeNumber = require('makeNumber');
 const makeTableMap = require('makeTableMap');
+const templateStorage = require('templateStorage');
 
 const CDN_URL = 'https://cdn.oursprivacy.com';
 const MAIN_JS_PATH = 'main.js';
@@ -43,14 +44,28 @@ const normalizeThreeColumnTable = (table, prop, val, behavior) => {
   return false;
 };
 
-// Handle install failure
-const onInstallFailure = () => {
+const isOursDefined = () => {
+  return !!copyFromWindow('ours');
+};
+
+const storeInTemplateStorage = (value) => {
+  const items = templateStorage.getItem('queued') || [];
+  items.push(value);
+  templateStorage.setItem('queued', items);
+};
+
+const getFromTemplateStorage = () => {
+  return templateStorage.getItem('queued');
+};
+
+// Handle inject failure
+const onInjectFailure = () => {
   log('Error: Failed to load the Ours JavaScript library');
   return data.gtmOnFailure();
 };
 
-// Handle install success and calls gtmOnSuccess
-const onInstallSuccess = () => {
+// Handle install
+const onInstall = () => {
   const user_id = data.advanced_user_id_override;
   const custom_domain = data.advanced_custom_domain;
   let options = {};
@@ -62,18 +77,21 @@ const onInstallSuccess = () => {
   }
 
   callInWindow('ours', 'init', data.token, options);
+  const items = getFromTemplateStorage() || [];
+  items.forEach((item) => {
+    callInWindow('ours', item[0], item[1], item[2], item[3], item[4]);
+  });
   data.gtmOnSuccess();
 };
 
-const onInstall = () => {
-  const oursIsDefined = copyFromWindow('ours');
-  if (!oursIsDefined) {
+const onInjectScriptThenInstall = () => {
+  if (!isOursDefined()) {
     const domain = data.advanced_custom_domain || CDN_URL;
     const script = domain + '/' + MAIN_JS_PATH;
     const cacheToken = 'ours-cache-token';
-    injectScript(script, onInstallSuccess, onInstallFailure, cacheToken);
+    injectScript(script, onInstall, onInjectFailure, cacheToken);
   } else {
-    onInstallSuccess();
+    onInstall();
   }
 };
 
@@ -86,14 +104,22 @@ const onTrack = () => {
     ep['$distinct_id'] = data.track_distinctId;
   }
 
-  callInWindow('ours', 'track', data.track_eventName, ep, up, dp);
+  if (isOursDefined()) {
+    callInWindow('ours', 'track', data.track_eventName, ep, up, dp);
+  } else {
+    storeInTemplateStorage([data.track_eventName, ep, up, dp]);
+  }
   data.gtmOnSuccess();
 };
 
 // Handle identify
 const onIdentify = () => {
   const userProperties = normalizeTable(data.identify_userProperties, 'property', 'value');
-  callInWindow('ours', 'identify', userProperties || {});
+  if (isOursDefined()) {
+    callInWindow('ours', 'identify', userProperties || {});
+  } else {
+    storeInTemplateStorage(['identify', userProperties]);
+  }
   data.gtmOnSuccess();
 };
 
@@ -101,7 +127,7 @@ const onIdentify = () => {
 const run = () => {
   switch (data.type) {
     case 'install':
-      onInstall();
+      onInjectScriptThenInstall();
       break;
 
     case 'track':
