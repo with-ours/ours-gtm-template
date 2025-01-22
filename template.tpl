@@ -35,6 +35,48 @@ ___TEMPLATE_PARAMETERS___
 
 [
   {
+    "type": "SELECT",
+    "name": "type",
+    "displayName": "Action",
+    "selectItems": [
+      {
+        "value": "track",
+        "displayValue": "Track"
+      },
+      {
+        "value": "install",
+        "displayValue": "Install"
+      },
+      {
+        "value": "identify",
+        "displayValue": "Identify"
+      }
+    ],
+    "simpleValueType": true,
+    "defaultValue": "track",
+    "alwaysInSummary": true
+  },
+  {
+    "type": "GROUP",
+    "name": "installOptions",
+    "displayName": "Install Options",
+    "groupStyle": "NO_ZIPPY",
+    "subParams": [
+      {
+        "type": "LABEL",
+        "name": "installOptions_label",
+        "displayName": "Please be sure to trigger an \"Install\" tag on with the \"Initialization\" trigger on every page. \u003ca href\u003d\"https://docs.oursprivacy.com/docs/gtm-install\"\u003eRead more\u003c/a\u003e"
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "type",
+        "paramValue": "install",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
     "type": "TEXT",
     "name": "token",
     "displayName": "Project Token",
@@ -45,29 +87,52 @@ ___TEMPLATE_PARAMETERS___
       }
     ],
     "help": "You can get the Project Token from \u003ca href\u003d\"https://app.oursprivacy.com/install\" target\u003d\"_blank\"\u003eproject settings\u003c/a\u003e.",
-    "alwaysInSummary": true
+    "alwaysInSummary": true,
+    "enablingConditions": [
+      {
+        "paramName": "type",
+        "paramValue": "install",
+        "type": "EQUALS"
+      }
+    ]
   },
   {
-    "type": "SELECT",
-    "name": "type",
-    "displayName": "Action",
-    "selectItems": [
+    "type": "GROUP",
+    "name": "advanced",
+    "displayName": "Advanced",
+    "groupStyle": "ZIPPY_CLOSED",
+    "subParams": [
       {
-        "value": "track",
-        "displayValue": "Track"
+        "type": "TEXT",
+        "name": "advanced_user_id_override",
+        "displayName": "Ours User ID Override",
+        "simpleValueType": true,
+        "help": "This will be used as the ID for the user in Ours. Usually, we recommend setting the externalId of the user instead of configuring passing your own User ID here. If you set this value, ensure that it is sufficiently random enough so that users do not share an ID."
       },
       {
-        "value": "identify",
-        "displayValue": "Identity"
-      },
-      {
-        "value": "install",
-        "displayValue": "Install"
+        "type": "TEXT",
+        "name": "advanced_custom_domain",
+        "displayName": "Custom Domain",
+        "simpleValueType": true,
+        "help": "After you have configured a custom domain in your Ours Privacy account, enter it here. The value needs to start with \"https://\" and not have a trailing path and/or slash. \n Example: https://metrics.oursprivacy.com \u003ca href\u003d\"https://docs.oursprivacy.com/docs/custom-domains\"\u003eRead more\u003c/a\u003e",
+        "valueValidators": [
+          {
+            "type": "REGEX",
+            "args": [
+              "^https:\\/\\/[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+            ]
+          }
+        ],
+        "valueHint": "https://metrics.oursprivacy.com"
       }
     ],
-    "simpleValueType": true,
-    "defaultValue": "track",
-    "alwaysInSummary": true
+    "enablingConditions": [
+      {
+        "paramName": "type",
+        "paramValue": "install",
+        "type": "EQUALS"
+      }
+    ]
   },
   {
     "type": "GROUP",
@@ -422,7 +487,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "TEXT",
         "name": "track_distinctId",
-        "displayName": "Distinct ID (optional)",
+        "displayName": "Distinct Event ID (optional)",
         "simpleValueType": true,
         "help": "Optional. This is passed onto destinations for de-duplication. And is usually defaulted to a unique uuid. If you wish to override the unique uuid, pass a random value here."
       }
@@ -527,159 +592,159 @@ ___TEMPLATE_PARAMETERS___
         "type": "EQUALS"
       }
     ]
-  },
-  {
-    "type": "GROUP",
-    "name": "installOptions",
-    "displayName": "Install Options",
-    "groupStyle": "NO_ZIPPY",
-    "subParams": [
-      {
-        "type": "LABEL",
-        "name": "installOptions_label",
-        "displayName": "In order for Ours to function as expected, please be sure that you trigger an \"Install\" Tag on every page."
-      }
-    ],
-    "enablingConditions": [
-      {
-        "paramName": "type",
-        "paramValue": "install",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "GROUP",
-    "name": "advanced",
-    "displayName": "Advanced",
-    "groupStyle": "ZIPPY_CLOSED",
-    "subParams": [
-      {
-        "type": "TEXT",
-        "name": "advanced_user_id_override",
-        "displayName": "Ours User ID Override",
-        "simpleValueType": true,
-        "help": "This will be used as the ID for the user in Ours. Usually, we recommend setting the externalId of the user instead of configuring passing your own User ID here. If you set this value, ensure that it is sufficiently random enough so that users do not share an ID."
-      }
-    ]
   }
 ]
 
 
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
-const callInWindow = require("callInWindow");
-const copyFromWindow = require("copyFromWindow");
-const injectScript = require("injectScript");
-const log = require("logToConsole");
-const makeNumber = require("makeNumber");
-const makeTableMap = require("makeTableMap");
+const callInWindow = require('callInWindow');
+const copyFromWindow = require('copyFromWindow');
+const injectScript = require('injectScript');
+const log = require('logToConsole');
+const makeNumber = require('makeNumber');
+const makeTableMap = require('makeTableMap');
+const templateStorage = require('templateStorage');
 
-const LOG_PREFIX = "[Ours / GTM] ";
-const WRAPPER_NAMESPACE = "ours";
-const CDN_URL = "https://cdn.oursprivacy.com/main.js";
-
-// Print a log message and set the tag to failed state
-const fail = (msg) => {
-    log(LOG_PREFIX + "Error: " + msg);
-    return data.gtmOnFailure();
-};
+const CDN_URL = 'https://cdn.oursprivacy.com';
+const MAIN_JS_PATH = 'main.js';
 
 // Normalize the input and return it
 const normalize = (val) => {
-    if (val === "null") return null;
-    if (val === "true" || val === true) return true;
-    if (val === "false" || val === false) return false;
-    return makeNumber(val) || val;
+  if (val === 'null') return null;
+  if (val === 'true' || val === true) return true;
+  if (val === 'false' || val === false) return false;
+  return makeNumber(val) || val;
 };
 
 // Normalize the template table
 const normalizeTable = (table, prop, val) => {
-    if (table && table.length) {
-        table = table.map((row) => {
-            const obj = {};
-            obj[prop] = row[prop];
-            obj[val] = normalize(row[val]);
-            return obj;
-        });
-        return makeTableMap(table, prop, val);
-    }
-    return false;
+  if (table && table.length) {
+    table = table.map((row) => {
+      const obj = {};
+      obj[prop] = row[prop];
+      obj[val] = normalize(row[val]);
+      return obj;
+    });
+    return makeTableMap(table, prop, val);
+  }
+  return false;
 };
 
+// Normalize the three column table
 const normalizeThreeColumnTable = (table, prop, val, behavior) => {
-    if (table && table.length) {
-        return table.reduce((acc, row) => {
-            acc[row[prop]] = {};
-            acc[row[prop]][val] = row[val];
-            acc[row[prop]][behavior] = row[behavior];
-            return acc;
-        }, {});
-    }
-    return false;
+  if (table && table.length) {
+    return table.reduce((acc, row) => {
+      acc[row[prop]] = {};
+      acc[row[prop]][val] = row[val];
+      acc[row[prop]][behavior] = row[behavior];
+      return acc;
+    }, {});
+  }
+  return false;
 };
 
-// Handle the initializing of the Ours library
-const handleInit = () => {
-    const user_id = data.advanced_user_id_override;
-    if (user_id) {
-        callInWindow("ours", "init", data.token, { user_id: user_id });
-    } else {
-        callInWindow("ours", "init", data.token);
-    }
+const isOursDefined = () => {
+  return !!copyFromWindow('ours');
 };
 
-// Handle the failure of the tag
-const onFailure = () => {
-    return fail("Failed to load the Ours JavaScript library");
+const storeInTemplateStorage = (value) => {
+  const items = templateStorage.getItem('queued') || [];
+  items.push(value);
+  templateStorage.setItem('queued', items);
 };
 
-// Handle the success of the tag
-const onSuccess = () => {
-    handleInit();
-
-    switch (data.type) {
-        case "install":
-            log('installed');
-            // does nothing else - ensures the injectScript is called below.
-            break;
-        case "track":
-            const trackEventProperties =
-                normalizeTable(data.track_eventProperties, "property", "value") || {};
-            const trackUserProperties =
-                normalizeTable(data.track_userProperties, "property", "value") || {};
-            const trackDefaultProperties =
-                normalizeThreeColumnTable(data.track_defaultProperties, "property", "value", "behavior") || {};
-            if (data.track_distinctId) {
-                trackEventProperties['$distinct_id'] = data.track_distinctId;
-            }
-            callInWindow(
-                "ours",
-                "track",
-                data.track_eventName,
-                trackEventProperties,
-                trackUserProperties,
-                trackDefaultProperties
-            );
-            break;
-
-        case "identify":
-            const userProperties =
-                normalizeTable(data.identify_userProperties, "property", "value") || {};
-            callInWindow("ours", "identify", userProperties);
-            break;
-    }
-
-    data.gtmOnSuccess();
+const getFromTemplateStorage = () => {
+  return templateStorage.getItem('queued');
 };
 
-// Check if namespace already exists
-const _ours = copyFromWindow(WRAPPER_NAMESPACE);
-if (!_ours) {
-    injectScript(CDN_URL, onSuccess, onFailure, "ours");
-} else {
-    onSuccess();
+// Handle inject failure
+const onInjectFailure = () => {
+  log('Error: Failed to load the Ours JavaScript library');
+  return data.gtmOnFailure();
 };
+
+// Handle install
+const onInstall = () => {
+  const user_id = data.advanced_user_id_override;
+  const custom_domain = data.advanced_custom_domain;
+  let options = {};
+  if (user_id) {
+    options.user_id = user_id;
+  }
+  if (custom_domain) {
+    options.custom_domain = custom_domain;
+  }
+
+  callInWindow('ours', 'init', data.token, options);
+  const items = getFromTemplateStorage() || [];
+  items.forEach((item) => {
+    callInWindow('ours', item[0], item[1], item[2], item[3], item[4]);
+  });
+  data.gtmOnSuccess();
+};
+
+const onInjectScriptThenInstall = () => {
+  if (!isOursDefined()) {
+    const domain = data.advanced_custom_domain || CDN_URL;
+    const script = domain + '/' + MAIN_JS_PATH;
+    const cacheToken = 'ours-cache-token';
+    injectScript(script, onInstall, onInjectFailure, cacheToken);
+  } else {
+    onInstall();
+  }
+};
+
+// Handle track
+const onTrack = () => {
+  const ep = normalizeTable(data.track_eventProperties, 'property', 'value') || {};
+  const up = normalizeTable(data.track_userProperties, 'property', 'value') || {};
+  const dp = normalizeThreeColumnTable(data.track_defaultProperties, 'property', 'value', 'behavior') || {};
+  if (data.track_distinctId) {
+    ep['$distinct_id'] = data.track_distinctId;
+  }
+
+  if (isOursDefined()) {
+    callInWindow('ours', 'track', data.track_eventName, ep, up, dp);
+  } else {
+    storeInTemplateStorage(['track', data.track_eventName, ep, up, dp]);
+  }
+  data.gtmOnSuccess();
+};
+
+// Handle identify
+const onIdentify = () => {
+  const userProperties = normalizeTable(data.identify_userProperties, 'property', 'value');
+  if (isOursDefined()) {
+    callInWindow('ours', 'identify', userProperties || {});
+  } else {
+    storeInTemplateStorage(['identify', userProperties]);
+  }
+  data.gtmOnSuccess();
+};
+
+// main entry point
+const run = () => {
+  switch (data.type) {
+    case 'install':
+      onInjectScriptThenInstall();
+      break;
+
+    case 'track':
+      onTrack();
+      break;
+
+    case 'identify':
+      onIdentify();
+      break;
+
+    default:
+      log('Invalid tag type ', data.type);
+      break;
+  }
+};
+
+run();
 
 
 ___WEB_PERMISSIONS___
@@ -790,6 +855,16 @@ ___WEB_PERMISSIONS___
     },
     "clientAnnotations": {
       "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "access_template_storage",
+        "versionId": "1"
+      },
+      "param": []
     },
     "isRequired": true
   }
