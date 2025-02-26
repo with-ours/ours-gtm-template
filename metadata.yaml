@@ -1,6 +1,8 @@
 homepage: "https://oursprivacy.com/"
 documentation: "https://docs.oursprivacy.com/docs/overview"
 versions:
+  - sha: 8b43781522bc3dc3483d9e3c61f1abbb4b87b61b
+    changeNotes: Enhance the GTM validation rules around properties set on the Ours Template
   - sha: cf4460b768b2c6d72c65a82c884f45e901d2b588
     changeNotes: Allow users to specify a specific distinct id for the event for duplication purposes
   - sha: 705eb6eebd7b2c0b5855aa327e6149eea1c931bf
