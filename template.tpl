@@ -124,6 +124,20 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "valueHint": "https://metrics.oursprivacy.com"
+      },
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "preloaded_ga4_ids",
+        "displayName": "GA4 Measurement Ids",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "GA4 Measurement Id",
+            "name": "ga4_measurement_id",
+            "type": "TEXT"
+          }
+        ],
+        "help": "You can improve the performance of your GA4 tracking by preloading your account here."
       }
     ],
     "enablingConditions": [
@@ -605,6 +619,7 @@ const log = require('logToConsole');
 const makeNumber = require('makeNumber');
 const makeTableMap = require('makeTableMap');
 const templateStorage = require('templateStorage');
+const createQueue = require('createQueue');
 
 const CDN_URL = 'https://cdn.oursprivacy.com';
 const MAIN_JS_PATH = 'main.js';
@@ -684,12 +699,25 @@ const onInstall = () => {
   data.gtmOnSuccess();
 };
 
+const injectGA4PreloadedScripts = (domain) => {
+  const ga4PreloadedScripts = data.preloaded_ga4_ids || [];
+  const ids = ga4PreloadedScripts.map((item) => item.ga4_measurement_id);
+  ids.sort((a, b) => a < b ? -1 : a > b ? 1 : 0);
+  ids.forEach((id, idx) => {
+    const layer = idx === 0 ? 'oursLayer' : ('oursLayer' + idx);
+    const script = domain + '/gtag/js?id=' + id + "&l=" + layer;
+    injectScript(script);
+    createQueue(layer);
+  });
+};
+
 const onInjectScriptThenInstall = () => {
   if (!isOursDefined()) {
     const domain = data.advanced_custom_domain || CDN_URL;
     const script = domain + '/' + MAIN_JS_PATH;
     const cacheToken = 'ours-cache-token';
     injectScript(script, onInstall, onInjectFailure, cacheToken);
+    injectGA4PreloadedScripts(domain);
   } else {
     onInstall();
   }
@@ -815,6 +843,162 @@ ___WEB_PERMISSIONS___
                   {
                     "type": 8,
                     "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "oursLayer"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "oursLayer1"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "oursLayer2"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "oursLayer3"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
                   },
                   {
                     "type": 8,

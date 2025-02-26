@@ -84,12 +84,24 @@ const onInstall = () => {
   data.gtmOnSuccess();
 };
 
+const injectGA4PreloadedScripts = (domain) => {
+  const ga4PreloadedScripts = data.preloaded_ga4_ids || [];
+  const ids = ga4PreloadedScripts.map((item) => item.ga4_measurement_id);
+  ids.sort((a, b) => a < b ? -1 : a > b ? 1 : 0);
+  ids.forEach((id, idx) => {
+    const layer = idx === 0 ? 'oursLayer' : ('oursLayer' + idx);
+    const script = domain + '/gtag/js?id=' + id + "&l=" + layer;
+    injectScript(script);
+  });
+};
+
 const onInjectScriptThenInstall = () => {
   if (!isOursDefined()) {
     const domain = data.advanced_custom_domain || CDN_URL;
     const script = domain + '/' + MAIN_JS_PATH;
     const cacheToken = 'ours-cache-token';
     injectScript(script, onInstall, onInjectFailure, cacheToken);
+    injectGA4PreloadedScripts(domain);
   } else {
     onInstall();
   }
