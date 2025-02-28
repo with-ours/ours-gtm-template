@@ -161,6 +161,13 @@ ___TEMPLATE_PARAMETERS___
         "simpleValueType": true,
         "valueValidators": [
           {
+            "type": "STRING_LENGTH",
+            "args": [
+              1,
+              250
+            ]
+          },
+          {
             "type": "NON_EMPTY"
           }
         ]
@@ -175,7 +182,12 @@ ___TEMPLATE_PARAMETERS___
             "displayName": "Property",
             "name": "property",
             "type": "TEXT",
-            "isUnique": true
+            "isUnique": true,
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
+            ]
           },
           {
             "defaultValue": "",
@@ -252,6 +264,11 @@ ___TEMPLATE_PARAMETERS___
               {
                 "value": "ip",
                 "displayValue": "IP Address"
+              }
+            ],
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
               }
             ]
           },
@@ -471,6 +488,11 @@ ___TEMPLATE_PARAMETERS___
                 "displayValue": "App Version",
                 "value": "version"
               }
+            ],
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
             ]
           },
           {
@@ -587,6 +609,11 @@ ___TEMPLATE_PARAMETERS___
               {
                 "value": "ip",
                 "displayValue": "IP Address"
+              }
+            ],
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
               }
             ]
           },
