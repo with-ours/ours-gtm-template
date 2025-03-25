@@ -156,27 +156,6 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "type": "SELECT",
-            "name": "consentPendingMode",
-            "displayName": "Pending Mode",
-            "selectItems": [
-              {
-                "value": "opt-in",
-                "displayValue": "Opt-In"
-              },
-              {
-                "value": "opt-out",
-                "displayValue": "Opt-Out"
-              },
-              {
-                "value": "pending",
-                "displayValue": "Pending"
-              }
-            ],
-            "simpleValueType": true,
-            "help": "- In **Opt-In Mode**, no tracking data is transmitted until the user explicitly grants consent. All events occurring before consent is provided are held in memory. Once the user opts in, the queued events are dispatched, and subsequent events are tracked in real time. This mode ensures full compliance with regulations requiring explicit user approval before any data is collected.\n\u003cbr/\u003e\n- In **Opt-Out Mode**, events are tracked and sent immediately as they occur. By default, consent is assumed, and data is transmitted in real time. However, if the user later revokes consent, the system will either flag or stop sending future events based on the updated consent settings.\n\u003cbr/\u003e\n- **In Pending Mode,** events are temporarily stored (queued) without being transmitted. Once the user makes a definitive choice—whether to opt in or opt out—the system will process the queued events according to the corresponding mode’s behavior. If the user does not make a definitive choice by the end of the session or closing the window, events are collected."
-          },
-          {
-            "type": "SELECT",
             "name": "consentGranted",
             "displayName": "Ours Privacy has consent when",
             "selectItems": [

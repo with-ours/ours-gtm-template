@@ -73,11 +73,11 @@ const onInstall = () => {
   if (data.advanced_custom_domain) {
     options.custom_domain = data.advanced_custom_domain;
   }
-  if (data.consentVendor) {
-    options.consentVendor = data.consentVendor;
-  }
   if (typeof data.consentEnabled === 'boolean') {
     options.consentEnabled = data.consentEnabled;
+  }
+  if (data.consentVendor) {
+    options.consentVendor = data.consentVendor;
   }
   if (data.consentGranted) {
     options.consentGranted = data.consentGranted;
