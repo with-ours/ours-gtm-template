@@ -66,64 +66,143 @@ ___TEMPLATE_PARAMETERS___
         "type": "LABEL",
         "name": "installOptions_label",
         "displayName": "Please be sure to trigger an \"Install\" tag on with the \"Initialization\" trigger on every page. \u003ca href\u003d\"https://docs.oursprivacy.com/docs/gtm-install\"\u003eRead more\u003c/a\u003e"
-      }
-    ],
-    "enablingConditions": [
-      {
-        "paramName": "type",
-        "paramValue": "install",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "TEXT",
-    "name": "token",
-    "displayName": "Project Token",
-    "simpleValueType": true,
-    "valueValidators": [
-      {
-        "type": "NON_EMPTY"
-      }
-    ],
-    "help": "You can get the Project Token from \u003ca href\u003d\"https://app.oursprivacy.com/install\" target\u003d\"_blank\"\u003eproject settings\u003c/a\u003e.",
-    "alwaysInSummary": true,
-    "enablingConditions": [
-      {
-        "paramName": "type",
-        "paramValue": "install",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "GROUP",
-    "name": "advanced",
-    "displayName": "Advanced",
-    "groupStyle": "ZIPPY_CLOSED",
-    "subParams": [
-      {
-        "type": "TEXT",
-        "name": "advanced_user_id_override",
-        "displayName": "Ours User ID Override",
-        "simpleValueType": true,
-        "help": "This will be used as the ID for the user in Ours. Usually, we recommend setting the externalId of the user instead of configuring passing your own User ID here. If you set this value, ensure that it is sufficiently random enough so that users do not share an ID."
       },
       {
         "type": "TEXT",
-        "name": "advanced_custom_domain",
-        "displayName": "Custom Domain",
+        "name": "token",
+        "displayName": "Project Token",
         "simpleValueType": true,
-        "help": "After you have configured a custom domain in your Ours Privacy account, enter it here. The value needs to start with \"https://\" and not have a trailing path and/or slash. \n Example: https://metrics.oursprivacy.com \u003ca href\u003d\"https://docs.oursprivacy.com/docs/custom-domains\"\u003eRead more\u003c/a\u003e",
         "valueValidators": [
           {
-            "type": "REGEX",
-            "args": [
-              "^https:\\/\\/[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
-            ]
+            "type": "NON_EMPTY"
           }
         ],
-        "valueHint": "https://metrics.oursprivacy.com"
+        "help": "You can get the Project Token from \u003ca href\u003d\"https://app.oursprivacy.com/install\" target\u003d\"_blank\"\u003eproject settings\u003c/a\u003e.",
+        "alwaysInSummary": true,
+        "enablingConditions": [
+          {
+            "paramName": "type",
+            "paramValue": "install",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "GROUP",
+        "name": "advanced",
+        "displayName": "Advanced",
+        "groupStyle": "ZIPPY_CLOSED",
+        "subParams": [
+          {
+            "type": "TEXT",
+            "name": "advanced_user_id_override",
+            "displayName": "Ours User ID Override",
+            "simpleValueType": true,
+            "help": "This will be used as the ID for the user in Ours. Usually, we recommend setting the externalId of the user instead of configuring passing your own User ID here. If you set this value, ensure that it is sufficiently random enough so that users do not share an ID."
+          },
+          {
+            "type": "TEXT",
+            "name": "advanced_custom_domain",
+            "displayName": "Custom Domain",
+            "simpleValueType": true,
+            "help": "After you have configured a custom domain in your Ours Privacy account, enter it here. The value needs to start with \"https://\" and not have a trailing path and/or slash. \n Example: https://metrics.oursprivacy.com \u003ca href\u003d\"https://docs.oursprivacy.com/docs/custom-domains\"\u003eRead more\u003c/a\u003e",
+            "valueValidators": [
+              {
+                "type": "REGEX",
+                "args": [
+                  "^https:\\/\\/[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+                ]
+              }
+            ],
+            "valueHint": "https://metrics.oursprivacy.com"
+          }
+        ],
+        "enablingConditions": [
+          {
+            "paramName": "type",
+            "paramValue": "install",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "GROUP",
+        "name": "consentOptions",
+        "displayName": "Consent",
+        "groupStyle": "ZIPPY_CLOSED",
+        "subParams": [
+          {
+            "type": "CHECKBOX",
+            "name": "consentEnabled",
+            "checkboxText": "Consent Enabled",
+            "simpleValueType": true
+          },
+          {
+            "type": "SELECT",
+            "name": "consentVendor",
+            "displayName": "Consent Vendor",
+            "selectItems": [
+              {
+                "value": "Osano",
+                "displayValue": "Osano"
+              },
+              {
+                "value": "TrustArc",
+                "displayValue": "TrustArc"
+              }
+            ],
+            "simpleValueType": true,
+            "notSetText": ""
+          },
+          {
+            "type": "SELECT",
+            "name": "consentGranted",
+            "displayName": "Ours Privacy has consent when",
+            "selectItems": [
+              {
+                "value": "always",
+                "displayValue": "Always"
+              },
+              {
+                "value": "any",
+                "displayValue": "Any consent is granted"
+              },
+              {
+                "value": "specific-category",
+                "displayValue": "A specific category is granted"
+              }
+            ],
+            "simpleValueType": true
+          },
+          {
+            "type": "TEXT",
+            "name": "consentGrantedCategory",
+            "displayName": "Consent Granted Category",
+            "simpleValueType": true,
+            "help": "Enter the consent category from your CMP that specifies that Ours Privacy can run and collect information.",
+            "enablingConditions": [
+              {
+                "paramName": "consentGranted",
+                "paramValue": "specific-category",
+                "type": "EQUALS"
+              }
+            ]
+          },
+          {
+            "type": "SIMPLE_TABLE",
+            "name": "consentCategories",
+            "displayName": "Consent Category names to track",
+            "simpleTableColumns": [
+              {
+                "defaultValue": "",
+                "displayName": "Categories",
+                "name": "category",
+                "type": "TEXT"
+              }
+            ],
+            "help": "Ours Privacy will automatically track the users consent status for the categories you list below"
+          }
+        ]
       }
     ],
     "enablingConditions": [
@@ -693,14 +772,27 @@ const onInjectFailure = () => {
 
 // Handle install
 const onInstall = () => {
-  const user_id = data.advanced_user_id_override;
-  const custom_domain = data.advanced_custom_domain;
   let options = {};
-  if (user_id) {
-    options.user_id = user_id;
+  if (data.advanced_user_id_override) {
+    options.user_id = data.advanced_user_id_override;
   }
-  if (custom_domain) {
-    options.custom_domain = custom_domain;
+  if (data.advanced_custom_domain) {
+    options.custom_domain = data.advanced_custom_domain;
+  }
+  if (typeof data.consentEnabled === 'boolean') {
+    options.consentEnabled = data.consentEnabled;
+  }
+  if (data.consentVendor) {
+    options.consentVendor = data.consentVendor;
+  }
+  if (data.consentGranted) {
+    options.consentGranted = data.consentGranted;
+  }
+  if (data.consentGrantedCategory) {
+    options.consentGrantedCategory = data.consentGrantedCategory;
+  }
+  if (data.consentCategories) {
+    options.consentCategories = data.consentCategories;
   }
 
   callInWindow('ours', 'init', data.token, options);
@@ -900,7 +992,17 @@ ___WEB_PERMISSIONS___
 
 ___TESTS___
 
-scenarios: []
+scenarios:
+- name: Install runs without errors
+  code: |-
+    const mockData = {
+      token: "test_token_12345",
+      type: "install"
+    };
+
+    runCode(mockData);
+
+    assertApi('injectScript').wasCalled();
 
 
 ___NOTES___
