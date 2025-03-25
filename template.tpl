@@ -65,7 +65,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "LABEL",
         "name": "installOptions_label",
-        "displayName": "Please be sure to trigger an \"Install\" tag on with the \"Initialization\" trigger on every page. \u003ca href\u003d\"https://docs.oursprivacy.com/docs/gtm-install\"\u003eRead more\u003c/a\u003e"
+        "displayName": "Make sure to trigger an “Install” tag with the “Initialization” trigger on every page. \u003ca href\u003d\"https://docs.oursprivacy.com/docs/gtm-install\"\u003eRead more\u003c/a\u003e"
       },
       {
         "type": "TEXT",
