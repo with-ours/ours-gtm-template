@@ -67,6 +67,9 @@ const onInjectFailure = () => {
 // Handle install
 const onInstall = () => {
   let options = {};
+  if (data.track_web_events) {
+    options.track_web_events = data.track_web_events;
+  }
   if (data.advanced_user_id_override) {
     options.user_id = data.advanced_user_id_override;
   }
