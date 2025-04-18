@@ -88,6 +88,21 @@ ___TEMPLATE_PARAMETERS___
         ]
       },
       {
+        "type": "CHECKBOX",
+        "name": "track_web_events",
+        "checkboxText": "Track Web Events",
+        "simpleValueType": true,
+        "alwaysInSummary": false,
+        "enablingConditions": [
+          {
+            "paramName": "type",
+            "paramValue": "install",
+            "type": "EQUALS"
+          }
+        ],
+        "help": "Automatically sends events like page_view, scroll, user_engagement, and more through to your Ours Privacy account."
+      },
+      {
         "type": "GROUP",
         "name": "advanced",
         "displayName": "Advanced",
@@ -773,6 +788,9 @@ const onInjectFailure = () => {
 // Handle install
 const onInstall = () => {
   let options = {};
+  if (data.track_web_events) {
+    options.track_web_events = data.track_web_events;
+  }
   if (data.advanced_user_id_override) {
     options.user_id = data.advanced_user_id_override;
   }
