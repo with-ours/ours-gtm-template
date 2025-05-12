@@ -405,10 +405,6 @@ ___TEMPLATE_PARAMETERS___
                 "value": "gbraid"
               },
               {
-                "displayValue": "Google Click ID (GCLID)",
-                "value": "gc_id"
-              },
-              {
                 "displayValue": "Google Ads GCLID",
                 "value": "gclid"
               },
