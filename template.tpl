@@ -130,6 +130,46 @@ ___TEMPLATE_PARAMETERS___
               }
             ],
             "valueHint": "https://metrics.oursprivacy.com"
+          },
+          {
+            "type": "SIMPLE_TABLE",
+            "name": "default_event_properties",
+            "displayName": "Default Event Properties",
+            "simpleTableColumns": [
+              {
+                "defaultValue": "",
+                "displayName": "Property",
+                "name": "property",
+                "type": "TEXT"
+              },
+              {
+                "defaultValue": "",
+                "displayName": "Value",
+                "name": "value",
+                "type": "TEXT"
+              }
+            ],
+            "help": "These are event_properties that are attached to every event"
+          },
+          {
+            "type": "SIMPLE_TABLE",
+            "name": "default_user_custom_properties",
+            "displayName": "Default Visitor Custom Properties",
+            "simpleTableColumns": [
+              {
+                "defaultValue": "",
+                "displayName": "Property",
+                "name": "property",
+                "type": "TEXT"
+              },
+              {
+                "defaultValue": "",
+                "displayName": "Value",
+                "name": "value",
+                "type": "TEXT"
+              }
+            ],
+            "help": "These are visitor.custom_properties that are attached to every event"
           }
         ],
         "enablingConditions": [
@@ -786,6 +826,14 @@ const onInstall = () => {
   let options = {};
   if (data.track_web_events) {
     options.track_web_events = data.track_web_events;
+  }
+  const default_event_properties = normalizeTable(data.default_event_properties, 'property', 'value');
+  const default_user_custom_properties = normalizeTable(data.default_user_custom_properties, 'property', 'value');
+  if (default_event_properties) {
+    options.default_event_properties = default_event_properties;
+  }
+  if (default_user_custom_properties) {
+    options.default_user_custom_properties = default_user_custom_properties;
   }
   if (data.advanced_user_id_override) {
     options.user_id = data.advanced_user_id_override;
