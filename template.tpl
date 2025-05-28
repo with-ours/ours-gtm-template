@@ -179,85 +179,6 @@ ___TEMPLATE_PARAMETERS___
             "type": "EQUALS"
           }
         ]
-      },
-      {
-        "type": "GROUP",
-        "name": "consentOptions",
-        "displayName": "Consent",
-        "groupStyle": "ZIPPY_CLOSED",
-        "subParams": [
-          {
-            "type": "CHECKBOX",
-            "name": "consentEnabled",
-            "checkboxText": "Consent Enabled",
-            "simpleValueType": true
-          },
-          {
-            "type": "SELECT",
-            "name": "consentVendor",
-            "displayName": "Consent Vendor",
-            "selectItems": [
-              {
-                "value": "Osano",
-                "displayValue": "Osano"
-              },
-              {
-                "value": "TrustArc",
-                "displayValue": "TrustArc"
-              }
-            ],
-            "simpleValueType": true,
-            "notSetText": ""
-          },
-          {
-            "type": "SELECT",
-            "name": "consentGranted",
-            "displayName": "Ours Privacy has consent when",
-            "selectItems": [
-              {
-                "value": "always",
-                "displayValue": "Always"
-              },
-              {
-                "value": "any",
-                "displayValue": "Any consent is granted"
-              },
-              {
-                "value": "specific-category",
-                "displayValue": "A specific category is granted"
-              }
-            ],
-            "simpleValueType": true
-          },
-          {
-            "type": "TEXT",
-            "name": "consentGrantedCategory",
-            "displayName": "Consent Granted Category",
-            "simpleValueType": true,
-            "help": "Enter the consent category from your CMP that specifies that Ours Privacy can run and collect information.",
-            "enablingConditions": [
-              {
-                "paramName": "consentGranted",
-                "paramValue": "specific-category",
-                "type": "EQUALS"
-              }
-            ]
-          },
-          {
-            "type": "SIMPLE_TABLE",
-            "name": "consentCategories",
-            "displayName": "Consent Category names to track",
-            "simpleTableColumns": [
-              {
-                "defaultValue": "",
-                "displayName": "Categories",
-                "name": "category",
-                "type": "TEXT"
-              }
-            ],
-            "help": "Ours Privacy will automatically track the users consent status for the categories you list below"
-          }
-        ]
       }
     ],
     "enablingConditions": [
@@ -840,21 +761,6 @@ const onInstall = () => {
   }
   if (data.advanced_custom_domain) {
     options.custom_domain = data.advanced_custom_domain;
-  }
-  if (typeof data.consentEnabled === 'boolean') {
-    options.consentEnabled = data.consentEnabled;
-  }
-  if (data.consentVendor) {
-    options.consentVendor = data.consentVendor;
-  }
-  if (data.consentGranted) {
-    options.consentGranted = data.consentGranted;
-  }
-  if (data.consentGrantedCategory) {
-    options.consentGrantedCategory = data.consentGrantedCategory;
-  }
-  if (data.consentCategories) {
-    options.consentCategories = data.consentCategories;
   }
 
   callInWindow('ours', 'init', data.token, options);
