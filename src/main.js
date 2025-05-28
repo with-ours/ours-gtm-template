@@ -84,21 +84,6 @@ const onInstall = () => {
   if (data.advanced_custom_domain) {
     options.custom_domain = data.advanced_custom_domain;
   }
-  if (typeof data.consentEnabled === 'boolean') {
-    options.consentEnabled = data.consentEnabled;
-  }
-  if (data.consentVendor) {
-    options.consentVendor = data.consentVendor;
-  }
-  if (data.consentGranted) {
-    options.consentGranted = data.consentGranted;
-  }
-  if (data.consentGrantedCategory) {
-    options.consentGrantedCategory = data.consentGrantedCategory;
-  }
-  if (data.consentCategories) {
-    options.consentCategories = data.consentCategories;
-  }
 
   callInWindow('ours', 'init', data.token, options);
   const items = getFromTemplateStorage() || [];
