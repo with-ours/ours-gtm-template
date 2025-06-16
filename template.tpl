@@ -132,6 +132,29 @@ ___TEMPLATE_PARAMETERS___
             "valueHint": "https://metrics.oursprivacy.com"
           },
           {
+            "type": "TEXT",
+            "name": "advanced_custom_domain_ipv4",
+            "displayName": "Custom Domain (IPV4)",
+            "simpleValueType": true,
+            "help": "If you are using custom domains and are forcing the web SDK to only use an endpoint that collect V4 style IP addresses, you can set this value.",
+            "valueValidators": [
+              {
+                "type": "REGEX",
+                "args": [
+                  "^https:\\/\\/[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+                ]
+              }
+            ],
+            "valueHint": "https://ipv4-metrics.oursprivacy.com"
+          },
+          {
+            "type": "CHECKBOX",
+            "name": "advanced_force_ipv4",
+            "checkboxText": "Force IPV4",
+            "simpleValueType": true,
+            "help": "Whether to force users to send data to the IP Address V4 endpoint only. Note: This could result in a very small number of request from users who can only use IPV6 being lost."
+          },
+          {
             "type": "SIMPLE_TABLE",
             "name": "default_event_properties",
             "displayName": "Default Event Properties",
@@ -748,6 +771,18 @@ const onInstall = () => {
   if (data.track_web_events) {
     options.track_web_events = data.track_web_events;
   }
+  if (data.advanced_force_ipv4) {
+    options.force_ipv4 = data.advanced_force_ipv4;
+  }
+  if (data.advanced_custom_domain) {
+    options.custom_domain = data.advanced_custom_domain;
+  }
+  if (data.advanced_custom_domain_ipv4) {
+    options.custom_domain_ipv4 = data.advanced_custom_domain_ipv4;
+  }
+  if (data.advanced_user_id_override) {
+    options.user_id = data.advanced_user_id_override;
+  }
   const default_event_properties = normalizeTable(data.default_event_properties, 'property', 'value');
   const default_user_custom_properties = normalizeTable(data.default_user_custom_properties, 'property', 'value');
   if (default_event_properties) {
@@ -755,12 +790,6 @@ const onInstall = () => {
   }
   if (default_user_custom_properties) {
     options.default_user_custom_properties = default_user_custom_properties;
-  }
-  if (data.advanced_user_id_override) {
-    options.user_id = data.advanced_user_id_override;
-  }
-  if (data.advanced_custom_domain) {
-    options.custom_domain = data.advanced_custom_domain;
   }
 
   callInWindow('ours', 'init', data.token, options);
