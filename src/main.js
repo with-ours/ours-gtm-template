@@ -70,6 +70,18 @@ const onInstall = () => {
   if (data.track_web_events) {
     options.track_web_events = data.track_web_events;
   }
+  if (data.advanced_force_ipv4) {
+    options.force_ipv4 = data.advanced_force_ipv4;
+  }
+  if (data.advanced_custom_domain) {
+    options.custom_domain = data.advanced_custom_domain;
+  }
+  if (data.advanced_custom_domain_ipv4) {
+    options.custom_domain_ipv4 = data.advanced_custom_domain_ipv4;
+  }
+  if (data.advanced_user_id_override) {
+    options.user_id = data.advanced_user_id_override;
+  }
   const default_event_properties = normalizeTable(data.default_event_properties, 'property', 'value');
   const default_user_custom_properties = normalizeTable(data.default_user_custom_properties, 'property', 'value');
   if (default_event_properties) {
@@ -77,12 +89,6 @@ const onInstall = () => {
   }
   if (default_user_custom_properties) {
     options.default_user_custom_properties = default_user_custom_properties;
-  }
-  if (data.advanced_user_id_override) {
-    options.user_id = data.advanced_user_id_override;
-  }
-  if (data.advanced_custom_domain) {
-    options.custom_domain = data.advanced_custom_domain;
   }
 
   callInWindow('ours', 'init', data.token, options);
