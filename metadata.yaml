@@ -1,6 +1,8 @@
 homepage: "https://oursprivacy.com/"
 documentation: "https://docs.oursprivacy.com/docs/overview"
 versions:
+  - sha: 65464e212ea55226ae645554b7df0d842771066c
+    changeNotes: Add options to the install tag to support advanced customizations
   - sha: 8b43781522bc3dc3483d9e3c61f1abbb4b87b61b
     changeNotes: Enhance the GTM validation rules around properties set on the Ours Template
   - sha: cf4460b768b2c6d72c65a82c884f45e901d2b588
