@@ -138,6 +138,15 @@ const onIdentify = () => {
   data.gtmOnSuccess();
 };
 
+// Handle reset
+const onReset = () => {
+  if (isOursDefined()) {
+    const optionalResetVisitorId = data.reset_nextVisitorId;
+    callInWindow('ours', 'reset', optionalResetVisitorId);
+  }
+  data.gtmOnSuccess();
+};
+
 // main entry point
 const run = () => {
   switch (data.type) {
@@ -151,6 +160,10 @@ const run = () => {
 
     case 'identify':
       onIdentify();
+      break;
+
+    case 'reset':
+      onReset();
       break;
 
     default:

@@ -50,6 +50,10 @@ ___TEMPLATE_PARAMETERS___
       {
         "value": "identify",
         "displayValue": "Identify"
+      },
+      {
+        "value": "reset",
+        "displayValue": "Reset"
       }
     ],
     "simpleValueType": true,
@@ -208,6 +212,37 @@ ___TEMPLATE_PARAMETERS___
       {
         "paramName": "type",
         "paramValue": "install",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "GROUP",
+    "name": "resetOptions",
+    "displayName": "Reset Options",
+    "groupStyle": "NO_ZIPPY",
+    "subParams": [
+      {
+        "type": "TEXT",
+        "name": "reset_nextVisitorId",
+        "displayName": "Next Visitor ID",
+        "simpleValueType": true,
+        "valueValidators": [],
+        "help": "Optional. When reseting the Visitor ID, you can define the \"next\" value we should use for the Visitor ID. Please make sure this is sufficiently random so you don\u0027t automatically define several visitors with the same ID.",
+        "alwaysInSummary": true,
+        "enablingConditions": [
+          {
+            "paramName": "type",
+            "paramValue": "reset",
+            "type": "EQUALS"
+          }
+        ]
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "type",
+        "paramValue": "reset",
         "type": "EQUALS"
       }
     ]
@@ -839,6 +874,15 @@ const onIdentify = () => {
   data.gtmOnSuccess();
 };
 
+// Handle reset
+const onReset = () => {
+  if (isOursDefined()) {
+    const optionalResetVisitorId = data.reset_nextVisitorId;
+    callInWindow('ours', 'reset');
+  }
+  data.gtmOnSuccess();
+};
+
 // main entry point
 const run = () => {
   switch (data.type) {
@@ -852,6 +896,10 @@ const run = () => {
 
     case 'identify':
       onIdentify();
+      break;
+
+    case 'reset':
+      onReset();
       break;
 
     default:
