@@ -364,6 +364,14 @@ ___TEMPLATE_PARAMETERS___
               {
                 "value": "ip",
                 "displayValue": "IP Address"
+              },
+              {
+                "value": "custom_properties",
+                "displayValue": "Custom Properties"
+              },
+              {
+                "value": "consent",
+                "displayValue": "Consent"
               }
             ],
             "valueValidators": [
@@ -705,6 +713,14 @@ ___TEMPLATE_PARAMETERS___
               {
                 "value": "ip",
                 "displayValue": "IP Address"
+              },
+              {
+                "value": "custom_properties",
+                "displayValue": "Custom Properties"
+              },
+              {
+                "value": "consent",
+                "displayValue": "Consent"
               }
             ],
             "valueValidators": [
