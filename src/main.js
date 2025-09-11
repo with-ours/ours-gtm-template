@@ -70,6 +70,9 @@ const onInstall = () => {
   if (data.track_web_events) {
     options.track_web_events = data.track_web_events;
   }
+  if (data.enhanced_web_events) {
+    options.enhanced_web_events = data.enhanced_web_events;
+  }
   if (data.advanced_force_ipv4) {
     options.force_ipv4 = data.advanced_force_ipv4;
   }
