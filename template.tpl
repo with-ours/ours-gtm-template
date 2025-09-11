@@ -198,6 +198,14 @@ ___TEMPLATE_PARAMETERS___
               }
             ],
             "help": "These are visitor.custom_properties that are attached to every event"
+          },
+          {
+            "type": "CHECKBOX",
+            "name": "enhanced_web_events",
+            "checkboxText": "Enhance Web Events",
+            "simpleValueType": true,
+            "defaultValue": true,
+            "help": "Enable enhanced web event tracking to automatically capture additional event properties. When enabled, we\u0027ll collect extra details like click text, link URLs, and other contextual data for all automatically tracked web events."
           }
         ],
         "enablingConditions": [
@@ -823,6 +831,9 @@ const onInstall = () => {
   if (data.track_web_events) {
     options.track_web_events = data.track_web_events;
   }
+  if (data.enhanced_web_events) {
+    options.enhanced_web_events = data.enhanced_web_events;
+  }
   if (data.advanced_force_ipv4) {
     options.force_ipv4 = data.advanced_force_ipv4;
   }
@@ -895,7 +906,7 @@ const onIdentify = () => {
 const onReset = () => {
   if (isOursDefined()) {
     const optionalResetVisitorId = data.reset_nextVisitorId;
-    callInWindow('ours', 'reset');
+    callInWindow('ours', 'reset', optionalResetVisitorId);
   }
   data.gtmOnSuccess();
 };
