@@ -181,6 +181,26 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "type": "SIMPLE_TABLE",
+            "name": "default_user_consent_properties",
+            "displayName": "Default Visitor Consent Properties",
+            "simpleTableColumns": [
+              {
+                "defaultValue": "",
+                "displayName": "Property",
+                "name": "property",
+                "type": "TEXT"
+              },
+              {
+                "defaultValue": "",
+                "displayName": "Value",
+                "name": "value",
+                "type": "TEXT"
+              }
+            ],
+            "help": "These are visitor.consent that are attached to every event"
+          },
+          {
+            "type": "SIMPLE_TABLE",
             "name": "default_user_custom_properties",
             "displayName": "Default Visitor Custom Properties",
             "simpleTableColumns": [
@@ -308,7 +328,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "SIMPLE_TABLE",
         "name": "track_userProperties",
-        "displayName": "User Properties (optional)",
+        "displayName": "Visitor Properties (optional)",
         "simpleTableColumns": [
           {
             "defaultValue": "",
@@ -372,14 +392,6 @@ ___TEMPLATE_PARAMETERS___
               {
                 "value": "ip",
                 "displayValue": "IP Address"
-              },
-              {
-                "value": "custom_properties",
-                "displayValue": "Custom Properties"
-              },
-              {
-                "value": "consent",
-                "displayValue": "Consent"
               }
             ],
             "valueValidators": [
@@ -395,6 +407,58 @@ ___TEMPLATE_PARAMETERS___
             "type": "TEXT"
           }
         ]
+      },
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "track_userProperties_consent",
+        "displayName": "Visitor (Consent - optional)",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "Property",
+            "name": "property",
+            "type": "TEXT",
+            "isUnique": true,
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
+            ]
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Value",
+            "name": "value",
+            "type": "TEXT"
+          }
+        ],
+        "help": "An object sent with the event that gets stored on visitor.consent"
+      },
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "track_userProperties_custom_properties",
+        "displayName": "Visitor Properties (Custom Properties - optional)",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "Property",
+            "name": "property",
+            "type": "TEXT",
+            "isUnique": true,
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
+            ]
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Value",
+            "name": "value",
+            "type": "TEXT"
+          }
+        ],
+        "help": "An object sent with the event that gets stored on visitor.custom_properties"
       },
       {
         "type": "SIMPLE_TABLE",
@@ -657,7 +721,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "SIMPLE_TABLE",
         "name": "identify_userProperties",
-        "displayName": "User Properties (optional)",
+        "displayName": "Visitor Properties (optional)",
         "simpleTableColumns": [
           {
             "defaultValue": "",
@@ -721,14 +785,6 @@ ___TEMPLATE_PARAMETERS___
               {
                 "value": "ip",
                 "displayValue": "IP Address"
-              },
-              {
-                "value": "custom_properties",
-                "displayValue": "Custom Properties"
-              },
-              {
-                "value": "consent",
-                "displayValue": "Consent"
               }
             ],
             "valueValidators": [
@@ -744,6 +800,46 @@ ___TEMPLATE_PARAMETERS___
             "type": "TEXT"
           }
         ]
+      },
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "identify_userProperties_consent",
+        "displayName": "Visitor Properties (Consent - optional)",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "Property",
+            "name": "property",
+            "type": "TEXT"
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Value",
+            "name": "value",
+            "type": "TEXT"
+          }
+        ],
+        "help": "An object sent with the event that gets stored on visitor.consent"
+      },
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "identify_userProperties_custom_properties",
+        "displayName": "Visitor Properties (Custom Properties - optional)",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "Property",
+            "name": "property",
+            "type": "TEXT"
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Value",
+            "name": "value",
+            "type": "TEXT"
+          }
+        ],
+        "help": "An object sent with the event that gets stored on visitor.custom_properties"
       }
     ],
     "enablingConditions": [
@@ -848,11 +944,15 @@ const onInstall = () => {
   }
   const default_event_properties = normalizeTable(data.default_event_properties, 'property', 'value');
   const default_user_custom_properties = normalizeTable(data.default_user_custom_properties, 'property', 'value');
+  const default_user_consent_properties = normalizeTable(data.default_user_consent_properties, 'property', 'value');
   if (default_event_properties) {
     options.default_event_properties = default_event_properties;
   }
   if (default_user_custom_properties) {
     options.default_user_custom_properties = default_user_custom_properties;
+  }
+  if (default_user_consent_properties) {
+    options.default_user_consent_properties = default_user_consent_properties;
   }
 
   callInWindow('ours', 'init', data.token, options);
@@ -879,6 +979,15 @@ const onTrack = () => {
   const ep = normalizeTable(data.track_eventProperties, 'property', 'value') || {};
   const up = normalizeTable(data.track_userProperties, 'property', 'value') || {};
   const dp = normalizeThreeColumnTable(data.track_defaultProperties, 'property', 'value', 'behavior') || {};
+  const userConsentProperties = normalizeTable(data.track_userProperties_consent, 'property', 'value');
+  const userCustomProperties = normalizeTable(data.track_userProperties_custom_properties, 'property', 'value');
+  if (userConsentProperties) {
+    up.consent = userConsentProperties;
+  }
+  if (userCustomProperties) {
+    up.custom_properties = userCustomProperties;
+  }
+
   if (data.track_distinctId) {
     ep['$distinct_id'] = data.track_distinctId;
   }
@@ -894,6 +1003,14 @@ const onTrack = () => {
 // Handle identify
 const onIdentify = () => {
   const userProperties = normalizeTable(data.identify_userProperties, 'property', 'value');
+  const userConsentProperties = normalizeTable(data.track_userProperties_consent, 'property', 'value');
+  const userCustomProperties = normalizeTable(data.track_userProperties_custom_properties, 'property', 'value');
+  if (userConsentProperties) {
+    userProperties.consent = userConsentProperties;
+  }
+  if (userCustomProperties) {
+    userProperties.custom_properties = userCustomProperties;
+  }
   if (isOursDefined()) {
     callInWindow('ours', 'identify', userProperties || {});
   } else {
