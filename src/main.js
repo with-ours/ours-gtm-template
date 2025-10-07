@@ -85,6 +85,9 @@ const onInstall = () => {
   if (data.advanced_user_id_override) {
     options.user_id = data.advanced_user_id_override;
   }
+  if (data.advanced_session_replay_token) {
+    options.session_replay = { token: data.advanced_session_replay_token };
+  }
   const default_event_properties = normalizeTable(data.default_event_properties, 'property', 'value');
   const default_user_custom_properties = normalizeTable(data.default_user_custom_properties, 'property', 'value');
   const default_user_consent_properties = normalizeTable(data.default_user_consent_properties, 'property', 'value');

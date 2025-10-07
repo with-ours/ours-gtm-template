@@ -115,10 +115,10 @@ ___TEMPLATE_PARAMETERS___
         "subParams": [
           {
             "type": "TEXT",
-            "name": "advanced_user_id_override",
-            "displayName": "Ours User ID Override",
+            "name": "advanced_session_replay_token",
+            "displayName": "Session Replay Token",
             "simpleValueType": true,
-            "help": "This will be used as the ID for the user in Ours. Usually, we recommend setting the externalId of the user instead of configuring passing your own User ID here. If you set this value, ensure that it is sufficiently random enough so that users do not share an ID."
+            "help": "Copy this token from inside the Ours Privacy application. This will automatically start tracking and collecting session replays."
           },
           {
             "type": "TEXT",
@@ -226,6 +226,13 @@ ___TEMPLATE_PARAMETERS___
             "simpleValueType": true,
             "defaultValue": true,
             "help": "Enable enhanced web event tracking to automatically capture additional event properties. When enabled, we\u0027ll collect extra details like click text, link URLs, and other contextual data for all automatically tracked web events."
+          },
+          {
+            "type": "TEXT",
+            "name": "advanced_user_id_override",
+            "displayName": "Ours User ID Override",
+            "simpleValueType": true,
+            "help": "This will be used as the ID for the user in Ours. Usually, we recommend setting the externalId of the user instead of configuring passing your own User ID here. If you set this value, ensure that it is sufficiently random enough so that users do not share an ID."
           }
         ],
         "enablingConditions": [
@@ -941,6 +948,9 @@ const onInstall = () => {
   }
   if (data.advanced_user_id_override) {
     options.user_id = data.advanced_user_id_override;
+  }
+  if (data.advanced_session_replay_token) {
+    options.session_replay = { token: data.advanced_session_replay_token };
   }
   const default_event_properties = normalizeTable(data.default_event_properties, 'property', 'value');
   const default_user_custom_properties = normalizeTable(data.default_user_custom_properties, 'property', 'value');
