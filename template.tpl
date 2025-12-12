@@ -54,6 +54,18 @@ ___TEMPLATE_PARAMETERS___
       {
         "value": "reset",
         "displayValue": "Reset"
+      },
+      {
+        "value": "updateDefaultEventProperties",
+        "displayValue": "Update Default Event Properties"
+      },
+      {
+        "value": "updateDefaultUserCustomProperties",
+        "displayValue": "Update Default User Custom Properties"
+      },
+      {
+        "value": "updateDefaultUserConsentProperties",
+        "displayValue": "Update Default User Consent Properties"
       }
     ],
     "simpleValueType": true,
@@ -853,6 +865,129 @@ ___TEMPLATE_PARAMETERS___
       {
         "paramName": "type",
         "paramValue": "identify",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "GROUP",
+    "name": "updateDefaultEventPropertiesOptions",
+    "displayName": "Update Default Event Properties Options",
+    "groupStyle": "NO_ZIPPY",
+    "subParams": [
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "updateDefaultEventProperties_properties",
+        "displayName": "Event Properties",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "Property",
+            "name": "property",
+            "type": "TEXT",
+            "isUnique": true,
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
+            ]
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Value",
+            "name": "value",
+            "type": "TEXT"
+          }
+        ],
+        "help": "These properties will replace the existing default event properties. They will be included in all subsequent tracked events."
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "type",
+        "paramValue": "updateDefaultEventProperties",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "GROUP",
+    "name": "updateDefaultUserCustomPropertiesOptions",
+    "displayName": "Update Default User Custom Properties Options",
+    "groupStyle": "NO_ZIPPY",
+    "subParams": [
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "updateDefaultUserCustomProperties_properties",
+        "displayName": "User Custom Properties",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "Property",
+            "name": "property",
+            "type": "TEXT",
+            "isUnique": true,
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
+            ]
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Value",
+            "name": "value",
+            "type": "TEXT"
+          }
+        ],
+        "help": "These properties will replace the existing default user custom properties. They will be included in all subsequent tracked events."
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "type",
+        "paramValue": "updateDefaultUserCustomProperties",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "GROUP",
+    "name": "updateDefaultUserConsentPropertiesOptions",
+    "displayName": "Update Default User Consent Properties Options",
+    "groupStyle": "NO_ZIPPY",
+    "subParams": [
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "updateDefaultUserConsentProperties_properties",
+        "displayName": "User Consent Properties",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "Property",
+            "name": "property",
+            "type": "TEXT",
+            "isUnique": true,
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
+            ]
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Value",
+            "name": "value",
+            "type": "TEXT"
+          }
+        ],
+        "help": "These properties will replace the existing default user consent properties. They will be included in all subsequent tracked events."
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "type",
+        "paramValue": "updateDefaultUserConsentProperties",
         "type": "EQUALS"
       }
     ]
