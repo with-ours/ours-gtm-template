@@ -174,6 +174,45 @@ const onReset = () => {
   data.gtmOnSuccess();
 };
 
+// Handle updateDefaultEventProperties
+const onUpdateDefaultEventProperties = () => {
+  const properties = normalizeTable(data.updateDefaultEventProperties_properties, 'property', 'value');
+  if (isOursDefined()) {
+    if (properties) {
+      callInWindow('ours', 'updateDefaultEventProperties', properties);
+    }
+  } else {
+    storeInTemplateStorage(['updateDefaultEventProperties', properties]);
+  }
+  data.gtmOnSuccess();
+};
+
+// Handle updateDefaultUserCustomProperties
+const onUpdateDefaultUserCustomProperties = () => {
+  const properties = normalizeTable(data.updateDefaultUserCustomProperties_properties, 'property', 'value');
+  if (isOursDefined()) {
+    if (properties) {
+      callInWindow('ours', 'updateDefaultUserCustomProperties', properties);
+    }
+  } else {
+    storeInTemplateStorage(['updateDefaultUserCustomProperties', properties]);
+  }
+  data.gtmOnSuccess();
+};
+
+// Handle updateDefaultUserConsentProperties
+const onUpdateDefaultUserConsentProperties = () => {
+  const properties = normalizeTable(data.updateDefaultUserConsentProperties_properties, 'property', 'value');
+  if (isOursDefined()) {
+    if (properties) {
+      callInWindow('ours', 'updateDefaultUserConsentProperties', properties);
+    }
+  } else {
+    storeInTemplateStorage(['updateDefaultUserConsentProperties', properties]);
+  }
+  data.gtmOnSuccess();
+};
+
 // main entry point
 const run = () => {
   switch (data.type) {
@@ -191,6 +230,18 @@ const run = () => {
 
     case 'reset':
       onReset();
+      break;
+
+    case 'updateDefaultEventProperties':
+      onUpdateDefaultEventProperties();
+      break;
+
+    case 'updateDefaultUserCustomProperties':
+      onUpdateDefaultUserCustomProperties();
+      break;
+
+    case 'updateDefaultUserConsentProperties':
+      onUpdateDefaultUserConsentProperties();
       break;
 
     default:
