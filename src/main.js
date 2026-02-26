@@ -88,6 +88,9 @@ const onInstall = () => {
   if (data.advanced_session_replay_token) {
     options.session_replay = { token: data.advanced_session_replay_token };
   }
+  if (data.advanced_bot_detection) {
+    options.bot_detection = data.advanced_bot_detection;
+  }
   const default_event_properties = normalizeTable(data.default_event_properties, 'property', 'value');
   const default_user_custom_properties = normalizeTable(data.default_user_custom_properties, 'property', 'value');
   const default_user_consent_properties = normalizeTable(data.default_user_consent_properties, 'property', 'value');
