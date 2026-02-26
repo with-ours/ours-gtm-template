@@ -240,6 +240,13 @@ ___TEMPLATE_PARAMETERS___
             "help": "Enable enhanced web event tracking to automatically capture additional event properties. When enabled, we\u0027ll collect extra details like click text, link URLs, and other contextual data for all automatically tracked web events."
           },
           {
+            "type": "CHECKBOX",
+            "name": "advanced_bot_detection",
+            "checkboxText": "Enable Bot Detection",
+            "simpleValueType": true,
+            "help": "Enable behavioral bot detection signal collection. When enabled, the SDK collects mouse, scroll, click, and keyboard behavioral signals and attaches them to events for server-side scoring."
+          },
+          {
             "type": "TEXT",
             "name": "advanced_user_id_override",
             "displayName": "Ours User ID Override",
@@ -1086,6 +1093,9 @@ const onInstall = () => {
   }
   if (data.advanced_session_replay_token) {
     options.session_replay = { token: data.advanced_session_replay_token };
+  }
+  if (data.advanced_bot_detection) {
+    options.bot_detection = data.advanced_bot_detection;
   }
   const default_event_properties = normalizeTable(data.default_event_properties, 'property', 'value');
   const default_user_custom_properties = normalizeTable(data.default_user_custom_properties, 'property', 'value');
