@@ -3,6 +3,7 @@ const copyFromWindow = require('copyFromWindow');
 const injectScript = require('injectScript');
 const log = require('logToConsole');
 const makeNumber = require('makeNumber');
+const getType = require('getType');
 const makeTableMap = require('makeTableMap');
 const templateStorage = require('templateStorage');
 
@@ -42,6 +43,29 @@ const normalizeThreeColumnTable = (table, prop, val, behavior) => {
     }, {});
   }
   return false;
+};
+
+// Deep merge two objects recursively
+const deepMerge = (target, source) => {
+  const result = {};
+  for (var key in target) {
+    result[key] = target[key];
+  }
+  for (var k in source) {
+    if (getType(result[k]) === 'object' && getType(source[k]) === 'object') {
+      result[k] = deepMerge(result[k], source[k]);
+    } else {
+      result[k] = source[k];
+    }
+  }
+  return result;
+};
+
+// Merge a table result with an object variable input
+const mergeWithObject = (tableResult, objectVariable) => {
+  const tableObj = tableResult || {};
+  const varObj = getType(objectVariable) === 'object' ? objectVariable : {};
+  return deepMerge(varObj, tableObj);
 };
 
 const isOursDefined = () => {
@@ -91,11 +115,14 @@ const onInstall = () => {
   if (data.advanced_bot_detection) {
     options.bot_detection = data.advanced_bot_detection;
   }
-  const default_event_properties = normalizeTable(data.default_event_properties, 'property', 'value');
+  const default_event_properties_table = normalizeTable(data.default_event_properties, 'property', 'value');
+  const default_event_properties = mergeWithObject(default_event_properties_table, data.default_event_properties_object);
   const default_user_custom_properties = normalizeTable(data.default_user_custom_properties, 'property', 'value');
   const default_user_consent_properties = normalizeTable(data.default_user_consent_properties, 'property', 'value');
-  if (default_event_properties) {
-    options.default_event_properties = default_event_properties;
+  if (default_event_properties && getType(default_event_properties) === 'object') {
+    var hasKeys = false;
+    for (var k in default_event_properties) { hasKeys = true; break; }
+    if (hasKeys) options.default_event_properties = default_event_properties;
   }
   if (default_user_custom_properties) {
     options.default_user_custom_properties = default_user_custom_properties;
@@ -125,7 +152,8 @@ const onInjectScriptThenInstall = () => {
 
 // Handle track
 const onTrack = () => {
-  const ep = normalizeTable(data.track_eventProperties, 'property', 'value') || {};
+  const epTable = normalizeTable(data.track_eventProperties, 'property', 'value');
+  const ep = mergeWithObject(epTable, data.track_eventPropertiesObject);
   const up = normalizeTable(data.track_userProperties, 'property', 'value') || {};
   const dp = normalizeThreeColumnTable(data.track_defaultProperties, 'property', 'value', 'behavior') || {};
   const userConsentProperties = normalizeTable(data.track_userProperties_consent, 'property', 'value');
@@ -179,13 +207,16 @@ const onReset = () => {
 
 // Handle updateDefaultEventProperties
 const onUpdateDefaultEventProperties = () => {
-  const properties = normalizeTable(data.updateDefaultEventProperties_properties, 'property', 'value');
+  const propertiesTable = normalizeTable(data.updateDefaultEventProperties_properties, 'property', 'value');
+  const properties = mergeWithObject(propertiesTable, data.updateDefaultEventProperties_propertiesObject);
+  var hasProps = false;
+  for (var k in properties) { hasProps = true; break; }
   if (isOursDefined()) {
-    if (properties) {
+    if (hasProps) {
       callInWindow('ours', 'updateDefaultEventProperties', properties);
     }
   } else {
-    storeInTemplateStorage(['updateDefaultEventProperties', properties]);
+    if (hasProps) storeInTemplateStorage(['updateDefaultEventProperties', properties]);
   }
   data.gtmOnSuccess();
 };

@@ -1,6 +1,6 @@
 # Ours Privacy / Google Tag Manager Custom Tag Template
 
-This repository contains the Ours Privacy Javascript SDK implement via a Google Tag Manager custom tag template.
+This repository contains the Ours Privacy Javascript SDK implementation via a Google Tag Manager custom tag template.
 
 ## Overview
 
@@ -30,7 +30,7 @@ To manually install the template for testing or debugging purposes:
 ### Automatic Initialization
 When any tag using the Ours Privacy template fires, the SDK is automatically initialized if it hasn't been already. The initialization uses the configuration options specified in the GTM UI, and you don’t need to manually set up the token or include the SDK script on your site.
 
-Using this tag, is the same as calling `ours('track', 'Event Name', {eventProperties}, {userProperties})`.
+Using this tag is the same as calling `ours('track', 'Event Name', {eventProperties}, {userProperties})`.
 
 You should not manually call the ours function for an event you are also tracking through this integration.
 
@@ -61,4 +61,4 @@ To track an event, configure it in the GTM UI and trigger it using any standard 
 
 For more information, visit:
 - **Ours Privacy Website**: [oursprivacy.com](https://oursprivacy.com)
-- **Documentation**: [docs.oursprivacy.com](https://docs.oursprivacy.com)
+- **Documentation**: [docs.oursprivacy.com](https://docs.oursprivacy.com/docs/gtm-install)
