@@ -134,6 +134,13 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "type": "TEXT",
+            "name": "advanced_experimentation_token",
+            "displayName": "Experimentation Token",
+            "simpleValueType": true,
+            "help": "Copy this token from inside the Ours Privacy application. This will enable experimentation features."
+          },
+          {
+            "type": "TEXT",
             "name": "advanced_custom_domain",
             "displayName": "Custom Domain",
             "simpleValueType": true,
@@ -1138,6 +1145,9 @@ const onInstall = () => {
   }
   if (data.advanced_session_replay_token) {
     options.session_replay = { token: data.advanced_session_replay_token };
+  }
+  if (data.advanced_experimentation_token) {
+    options.experimentation = { token: data.advanced_experimentation_token };
   }
   if (data.advanced_bot_detection) {
     options.bot_detection = data.advanced_bot_detection;

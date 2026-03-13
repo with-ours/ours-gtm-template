@@ -112,6 +112,9 @@ const onInstall = () => {
   if (data.advanced_session_replay_token) {
     options.session_replay = { token: data.advanced_session_replay_token };
   }
+  if (data.advanced_experimentation_token) {
+    options.experimentation = { token: data.advanced_experimentation_token };
+  }
   if (data.advanced_bot_detection) {
     options.bot_detection = data.advanced_bot_detection;
   }
