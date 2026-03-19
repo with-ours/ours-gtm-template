@@ -1049,6 +1049,8 @@ const normalize = (val) => {
   if (val === 'null') return null;
   if (val === 'true' || val === true) return true;
   if (val === 'false' || val === false) return false;
+  // Preserve strings that start with '+' (e.g. E.164 phone numbers like +15551234567)
+  if (getType(val) === 'string' && val.indexOf('+') === 0) return val;
   return makeNumber(val) || val;
 };
 
