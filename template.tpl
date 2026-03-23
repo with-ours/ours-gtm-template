@@ -266,6 +266,20 @@ ___TEMPLATE_PARAMETERS___
             "displayName": "Ours User ID Override",
             "simpleValueType": true,
             "help": "This will be used as the ID for the user in Ours. Usually, we recommend setting the externalId of the user instead of configuring passing your own User ID here. If you set this value, ensure that it is sufficiently random enough so that users do not share an ID."
+          },
+          {
+            "type": "TEXT",
+            "name": "advanced_device_id_cookie_name",
+            "displayName": "Device ID Cookie Name",
+            "simpleValueType": true,
+            "help": "Optional. Override the default `ours_device_id` cookie/localStorage key with a custom non-identifying name."
+          },
+          {
+            "type": "TEXT",
+            "name": "advanced_sdk_data_cookie_name",
+            "displayName": "SDK Data Cookie Name",
+            "simpleValueType": true,
+            "help": "Optional. Override the default `_cord_sdk_data` cookie/localStorage key used for consolidated SDK data."
           }
         ],
         "enablingConditions": [
@@ -1145,6 +1159,15 @@ const onInstall = () => {
   if (data.advanced_user_id_override) {
     options.user_id = data.advanced_user_id_override;
   }
+  if (data.advanced_device_id_cookie_name || data.advanced_sdk_data_cookie_name) {
+    options.cookie_names = {};
+    if (data.advanced_device_id_cookie_name) {
+      options.cookie_names.device_id = data.advanced_device_id_cookie_name;
+    }
+    if (data.advanced_sdk_data_cookie_name) {
+      options.cookie_names.sdk_data = data.advanced_sdk_data_cookie_name;
+    }
+  }
   if (data.advanced_session_replay_token) {
     options.session_replay = { token: data.advanced_session_replay_token };
   }
@@ -1218,7 +1241,7 @@ const onTrack = () => {
 
 // Handle identify
 const onIdentify = () => {
-  const userProperties = normalizeTable(data.identify_userProperties, 'property', 'value');
+  const userProperties = normalizeTable(data.identify_userProperties, 'property', 'value') || {};
   const userConsentProperties = normalizeTable(data.track_userProperties_consent, 'property', 'value');
   const userCustomProperties = normalizeTable(data.track_userProperties_custom_properties, 'property', 'value');
   if (userConsentProperties) {
@@ -1228,7 +1251,7 @@ const onIdentify = () => {
     userProperties.custom_properties = userCustomProperties;
   }
   if (isOursDefined()) {
-    callInWindow('ours', 'identify', userProperties || {});
+    callInWindow('ours', 'identify', userProperties);
   } else {
     storeInTemplateStorage(['identify', userProperties]);
   }
@@ -1237,9 +1260,13 @@ const onIdentify = () => {
 
 // Handle reset
 const onReset = () => {
+  const optionalResetVisitorId = data.reset_nextVisitorId;
   if (isOursDefined()) {
-    const optionalResetVisitorId = data.reset_nextVisitorId;
     callInWindow('ours', 'reset', optionalResetVisitorId);
+  } else if (optionalResetVisitorId) {
+    storeInTemplateStorage(['reset', optionalResetVisitorId]);
+  } else {
+    storeInTemplateStorage(['reset']);
   }
   data.gtmOnSuccess();
 };
@@ -1468,5 +1495,4 @@ scenarios:
 ___NOTES___
 
 Created on 12/6/2024, 12:14:17 PM
-
 
