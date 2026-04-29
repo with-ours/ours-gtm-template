@@ -134,6 +134,30 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "type": "TEXT",
+            "name": "advanced_session_replay_block_selector",
+            "displayName": "Session Replay Block Selector",
+            "simpleValueType": true,
+            "help": "CSS selector for elements that should be fully blocked from capture (replaced with a placeholder box). Comma-separated selectors are supported.",
+            "valueHint": ".payment-form, #card-number"
+          },
+          {
+            "type": "TEXT",
+            "name": "advanced_session_replay_ignore_selector",
+            "displayName": "Session Replay Ignore Selector",
+            "simpleValueType": true,
+            "help": "CSS selector for elements that bypass masking — text is captured unredacted even when mask_all_text is active. Comma-separated selectors are supported.",
+            "valueHint": ".public-content, #hero-text"
+          },
+          {
+            "type": "TEXT",
+            "name": "advanced_session_replay_mask_text_selector",
+            "displayName": "Session Replay Mask Text Selector",
+            "simpleValueType": true,
+            "help": "CSS selector for elements whose text should be masked. Comma-separated selectors are supported.",
+            "valueHint": ".user-email, #account-name"
+          },
+          {
+            "type": "TEXT",
             "name": "advanced_experimentation_token",
             "displayName": "Experimentation Token",
             "simpleValueType": true,
@@ -1170,6 +1194,15 @@ const onInstall = () => {
   }
   if (data.advanced_session_replay_token) {
     options.session_replay = { token: data.advanced_session_replay_token };
+    if (data.advanced_session_replay_block_selector) {
+      options.session_replay.block_selector = data.advanced_session_replay_block_selector;
+    }
+    if (data.advanced_session_replay_ignore_selector) {
+      options.session_replay.ignore_selector = data.advanced_session_replay_ignore_selector;
+    }
+    if (data.advanced_session_replay_mask_text_selector) {
+      options.session_replay.mask_text_selector = data.advanced_session_replay_mask_text_selector;
+    }
   }
   if (data.advanced_experimentation_token) {
     options.experimentation = { token: data.advanced_experimentation_token };
