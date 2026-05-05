@@ -34,6 +34,17 @@ const normalizeTable = (table, prop, val) => {
   return false;
 };
 
+// Flatten a single-column SIMPLE_TABLE into a string array, dropping empty rows.
+const normalizeList = (table, prop) => {
+  if (!table || !table.length) return false;
+  const out = [];
+  for (let i = 0; i < table.length; i++) {
+    const v = table[i][prop];
+    if (v) out.push(v);
+  }
+  return out.length ? out : false;
+};
+
 // Normalize the three column table
 const normalizeThreeColumnTable = (table, prop, val, behavior) => {
   if (table && table.length) {
@@ -122,12 +133,25 @@ const onInstall = () => {
   }
   if (data.advanced_session_replay_token) {
     options.session_replay = { token: data.advanced_session_replay_token };
+    if (data.advanced_session_replay_block_selector) {
+      options.session_replay.block_selector = data.advanced_session_replay_block_selector;
+    }
+    if (data.advanced_session_replay_ignore_selector) {
+      options.session_replay.ignore_selector = data.advanced_session_replay_ignore_selector;
+    }
+    if (data.advanced_session_replay_mask_text_selector) {
+      options.session_replay.mask_text_selector = data.advanced_session_replay_mask_text_selector;
+    }
   }
   if (data.advanced_experimentation_token) {
     options.experimentation = { token: data.advanced_experimentation_token };
   }
   if (data.advanced_bot_detection) {
     options.bot_detection = data.advanced_bot_detection;
+  }
+  const urlQueryParamsBlocklist = normalizeList(data.advanced_url_query_params_blocklist, 'param');
+  if (urlQueryParamsBlocklist) {
+    options.url_query_params_blocklist = urlQueryParamsBlocklist;
   }
   const default_event_properties_table = normalizeTable(data.default_event_properties, 'property', 'value');
   const default_event_properties = mergeWithObject(default_event_properties_table, data.default_event_properties_object);
