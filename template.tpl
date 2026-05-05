@@ -285,6 +285,20 @@ ___TEMPLATE_PARAMETERS___
             "help": "Enable behavioral bot detection signal collection. When enabled, the SDK collects mouse, scroll, click, and keyboard behavioral signals and attaches them to events for server-side scoring."
           },
           {
+            "type": "SIMPLE_TABLE",
+            "name": "advanced_url_query_params_blocklist",
+            "displayName": "URL Query Params Blocklist",
+            "simpleTableColumns": [
+              {
+                "defaultValue": "",
+                "displayName": "Param",
+                "name": "param",
+                "type": "TEXT"
+              }
+            ],
+            "help": "Query parameter names to remove from captured URL fields (page_url, referrer, etc.) before events are sent."
+          },
+          {
             "type": "TEXT",
             "name": "advanced_user_id_override",
             "displayName": "Ours User ID Override",
@@ -1106,6 +1120,17 @@ const normalizeTable = (table, prop, val) => {
   return false;
 };
 
+// Flatten a single-column SIMPLE_TABLE into a string array, dropping empty rows.
+const normalizeList = (table, prop) => {
+  if (!table || !table.length) return false;
+  const out = [];
+  for (let i = 0; i < table.length; i++) {
+    const v = table[i][prop];
+    if (v) out.push(v);
+  }
+  return out.length ? out : false;
+};
+
 // Normalize the three column table
 const normalizeThreeColumnTable = (table, prop, val, behavior) => {
   if (table && table.length) {
@@ -1209,6 +1234,10 @@ const onInstall = () => {
   }
   if (data.advanced_bot_detection) {
     options.bot_detection = data.advanced_bot_detection;
+  }
+  const urlQueryParamsBlocklist = normalizeList(data.advanced_url_query_params_blocklist, 'param');
+  if (urlQueryParamsBlocklist) {
+    options.url_query_params_blocklist = urlQueryParamsBlocklist;
   }
   const default_event_properties_table = normalizeTable(data.default_event_properties, 'property', 'value');
   const default_event_properties = mergeWithObject(default_event_properties_table, data.default_event_properties_object);

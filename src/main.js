@@ -34,6 +34,17 @@ const normalizeTable = (table, prop, val) => {
   return false;
 };
 
+// Flatten a single-column SIMPLE_TABLE into a string array, dropping empty rows.
+const normalizeList = (table, prop) => {
+  if (!table || !table.length) return false;
+  const out = [];
+  for (let i = 0; i < table.length; i++) {
+    const v = table[i][prop];
+    if (v) out.push(v);
+  }
+  return out.length ? out : false;
+};
+
 // Normalize the three column table
 const normalizeThreeColumnTable = (table, prop, val, behavior) => {
   if (table && table.length) {
@@ -137,6 +148,10 @@ const onInstall = () => {
   }
   if (data.advanced_bot_detection) {
     options.bot_detection = data.advanced_bot_detection;
+  }
+  const urlQueryParamsBlocklist = normalizeList(data.advanced_url_query_params_blocklist, 'param');
+  if (urlQueryParamsBlocklist) {
+    options.url_query_params_blocklist = urlQueryParamsBlocklist;
   }
   const default_event_properties_table = normalizeTable(data.default_event_properties, 'property', 'value');
   const default_event_properties = mergeWithObject(default_event_properties_table, data.default_event_properties_object);
