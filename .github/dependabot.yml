@@ -1,0 +1,29 @@
+# Dependabot keeps GitHub Actions pinned to SHAs.
+#
+# Action bumps: the resolved PR includes the action's commit SHA with a
+# trailing version comment (e.g.
+# `uses: actions/checkout@<40-char SHA> # v6.0.2`). Accept these to keep
+# SHA pinning across this repo's workflows.
+
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "fix"
+    groups:
+      actions-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
