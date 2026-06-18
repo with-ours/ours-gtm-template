@@ -142,6 +142,13 @@ const onInstall = () => {
     if (data.advanced_session_replay_mask_text_selector) {
       options.session_replay.mask_text_selector = data.advanced_session_replay_mask_text_selector;
     }
+    if (data.advanced_session_replay_mask_all_text) {
+      options.session_replay.mask_all_text = data.advanced_session_replay_mask_all_text;
+    }
+    const sessionReplayExcludePaths = normalizeList(data.advanced_session_replay_exclude_paths, 'path');
+    if (sessionReplayExcludePaths) {
+      options.session_replay.excludePaths = sessionReplayExcludePaths;
+    }
   }
   if (data.advanced_experimentation_token) {
     options.experimentation = { token: data.advanced_experimentation_token };
