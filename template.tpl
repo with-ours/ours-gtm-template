@@ -157,6 +157,27 @@ ___TEMPLATE_PARAMETERS___
             "valueHint": ".user-email, #account-name"
           },
           {
+            "type": "CHECKBOX",
+            "name": "advanced_session_replay_mask_all_text",
+            "checkboxText": "Mask All Text",
+            "simpleValueType": true,
+            "help": "When enabled, all text content is masked (redacted) in session replays. Use the Ignore Selector above to opt specific elements back in."
+          },
+          {
+            "type": "SIMPLE_TABLE",
+            "name": "advanced_session_replay_exclude_paths",
+            "displayName": "Session Replay Exclude Paths",
+            "simpleTableColumns": [
+              {
+                "defaultValue": "",
+                "displayName": "Path",
+                "name": "path",
+                "type": "TEXT"
+              }
+            ],
+            "help": "Path denylist (glob patterns matched against location.pathname). Recording is skipped on matching paths. Takes precedence over any allowlist."
+          },
+          {
             "type": "TEXT",
             "name": "advanced_experimentation_token",
             "displayName": "Experimentation Token",
@@ -1227,6 +1248,13 @@ const onInstall = () => {
     }
     if (data.advanced_session_replay_mask_text_selector) {
       options.session_replay.mask_text_selector = data.advanced_session_replay_mask_text_selector;
+    }
+    if (data.advanced_session_replay_mask_all_text) {
+      options.session_replay.mask_all_text = data.advanced_session_replay_mask_all_text;
+    }
+    const sessionReplayExcludePaths = normalizeList(data.advanced_session_replay_exclude_paths, 'path');
+    if (sessionReplayExcludePaths) {
+      options.session_replay.excludePaths = sessionReplayExcludePaths;
     }
   }
   if (data.advanced_experimentation_token) {
