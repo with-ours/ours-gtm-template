@@ -225,8 +225,8 @@ const onTrack = () => {
 // Handle identify
 const onIdentify = () => {
   const userProperties = normalizeTable(data.identify_userProperties, 'property', 'value') || {};
-  const userConsentProperties = normalizeTable(data.track_userProperties_consent, 'property', 'value');
-  const userCustomProperties = normalizeTable(data.track_userProperties_custom_properties, 'property', 'value');
+  const userConsentProperties = normalizeTable(data.identify_userProperties_consent, 'property', 'value');
+  const userCustomProperties = normalizeTable(data.identify_userProperties_custom_properties, 'property', 'value');
   if (userConsentProperties) {
     userProperties.consent = userConsentProperties;
   }
