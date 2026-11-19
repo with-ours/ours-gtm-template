@@ -1436,6 +1436,7 @@ const run = () => {
 
     default:
       log('Invalid tag type ', data.type);
+      data.gtmOnFailure();
       break;
   }
 };
@@ -1580,6 +1581,17 @@ scenarios:
     runCode(mockData);
 
     assertApi('injectScript').wasCalled();
+- name: Invalid tag type calls gtmOnFailure
+  code: |-
+    const mockData = {
+      token: "test_token_12345",
+      type: "notARealType"
+    };
+
+    runCode(mockData);
+
+    assertApi('gtmOnFailure').wasCalled();
+    assertApi('gtmOnSuccess').wasNotCalled();
 
 
 ___NOTES___
