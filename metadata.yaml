@@ -1,6 +1,8 @@
 homepage: "https://oursprivacy.com/"
 documentation: "https://docs.oursprivacy.com/docs/overview"
 versions:
+  - sha: 701bcd070809a22dbc044544dec337e9bf00ab30
+    changeNotes: Call gtmOnFailure for invalid tag types. Add reset, update default properties, consent and custom user properties, session replay, bot detection, experimentation, and URL query param blocklist options. Preserve E.164 phone strings.
   - sha: 65464e212ea55226ae645554b7df0d842771066c
     changeNotes: Add options to the install tag to support advanced customizations
   - sha: 8b43781522bc3dc3483d9e3c61f1abbb4b87b61b
