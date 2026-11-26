@@ -329,6 +329,7 @@ const run = () => {
 
     default:
       log('Invalid tag type ', data.type);
+      data.gtmOnFailure();
       break;
   }
 };
