@@ -52,6 +52,21 @@ To track an event, configure it in the GTM UI and trigger it using any standard 
 
 ## Testing the Template
 
+### Automated tests
+
+The `___TESTS___` scenarios in `template.tpl` run on every pull request and push to `main` (`.github/workflows/test.yml`). To run them locally with Node 24 or later:
+
+```sh
+npm test            # runs every ___TESTS___ scenario
+npm run check:sync  # checks src/main.js matches the template's sandboxed code
+```
+
+The runner (`scripts/run-template-tests.mjs`) has no dependencies. Unlike GTM's Run Tests button, it enforces the template's permissions even for mocked APIs, so a scenario that injects a script from a domain the template does not allow fails. Scenarios use GTM's test APIs (`runCode`, `mock`, `assertApi`, `assertThat`, `fail`) so the same scenarios run from the Template Editor's Tests tab.
+
+`template.tpl` is the code GTM runs. When you change the sandboxed code, make the same change in `src/main.js`.
+
+### In a GTM container
+
 1. Add a trigger to your tag (e.g., **All Pages**) to define when it fires.
 2. Save the tag and click the **Preview** button in GTM.
 3. Open your website in Preview mode to test the tag and ensure events are firing correctly.
